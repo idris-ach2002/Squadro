@@ -21,6 +21,68 @@ class PieceSquadro {
         $this->direction = $direction;
     }
 
+              /**
+     * renvoie la couleur de la pièce .
+     *
+     * @return int
+     */
+
+    public function getCouleur() : int {
+        return $this->couleur;
+    }
+          /**
+     * renvoie la direction de la pièce .
+     *
+     * @return int
+     */
+
+    public function getDirection() : int {
+        return $this->direction;
+    }
+
+
+      /**
+     * Change la direction de la pièce (inverse la direction actuelle).
+     *
+     * @return void
+     */
+    public function inverseDirection(): void {
+        switch ($this->direction) {
+            case self::NORD:
+                $this->setDirection(self::SUD);
+                break;
+            case self::SUD:
+                $this->setDirection(self::NORD);
+                break;
+            case self::EST:
+                $this->setDirection(self::OUEST);
+                break;
+            case self::OUEST:
+                $this->setDirection(self::EST);
+                break;
+        }
+    }
+
+    /**
+     * Modifie la direction de la pièce.
+     *
+     * @param int $direction La nouvelle direction.
+     * @return void
+     */
+    public function setDirection(int $direction): void {
+        $this->direction = $direction;
+    }
+
+
+      /**
+     * Renvoie une représentation textuelle de la pièce.
+     *
+     * @return string
+     */
+    public function __toString(): string {
+        return "Piece [Couleur: $this->couleur, Direction: $this->direction]";
+    }
+
     // Méthodes d'initialisation
     public static function initVide(): PieceSquadro {
         return new self(self::VIDE, self::NEUTRE);
