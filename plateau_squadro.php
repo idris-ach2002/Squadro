@@ -87,5 +87,62 @@ class PlateauSquadro {
         [$destX, $destY] = $this->getCoordDestination($x, $y);
         return $this->plateau[$destX][$destY];
     }
+
+    // Méthode toJson
+    public function toJson(): string {
+        $json = json_encode([
+            'plateau' => $this->plateau,
+            'lignesJouables' => $this->lignesJouables,
+            'colonnesJouables' => $this->colonnesJouables
+        ]);
+
+        if ($json === false) {
+            throw new \RuntimeException('Erreur lors de l\'encodage JSON : ' . json_last_error_msg());
+        }
+
+        return $json;
+    }
+
+    // Méthode fromJson
+    public static function fromJson(string $json): PlateauSquadro {
+        $data = json_decode($json, true);
+
+        if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+            throw new \InvalidArgumentException('Erreur lors du décodage JSON : ' . json_last_error_msg());
+        }
+
+        $plateauSquadro = new self();
+        $plateauSquadro->plateau = $data['plateau'];
+        $plateauSquadro->lignesJouables = $data['lignesJouables'];
+        $plateauSquadro->colonnesJouables = $data['colonnesJouables'];
+
+        return $plateauSquadro;
+    }
+
+    // Méthode __toString
+    public function __toString(): string {
+        return $this->toJson();
+    }
+
+    // Méthodes d'accès
+    public function getLignesJouables(): array {
+        return $this->lignesJouables;
+    }
+
+    public function getColonnesJouables(): array {
+        return $this->colonnesJouables;
+    }
+
+    public function getPlateau(): array {
+        return $this->plateau;
+    }
+
+    public function getPiece(int $ligne, int $colonne): PieceSquadro {
+        return $this->plateau[$ligne][$colonne];
+    }
+
+    public function setPiece(PieceSquadro $piece, int $ligne, int $colonne): void {
+        $this->plateau[$ligne][$colonne] = $piece;
+    }
 }
 ?>

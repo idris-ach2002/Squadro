@@ -21,7 +21,7 @@ class PieceSquadro {
         $this->direction = $direction;
     }
 
-              /**
+    /**
      * renvoie la couleur de la pièce .
      *
      * @return int
