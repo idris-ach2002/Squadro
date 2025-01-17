@@ -45,5 +45,19 @@ class PieceSquadro {
     public static function initBlancOuest(): PieceSquadro {
         return new self(self::BLANC, self::OUEST);
     }
+
+    // Méthode toJson
+    public function toJson(): string {
+        return json_encode([
+            'couleur' => $this->couleur,
+            'direction' => $this->direction
+        ]);
+    }
+
+    // Méthode fromJson
+    public static function fromJson(string $json): PieceSquadro {
+        $data = json_decode($json, true);
+        return new self($data['couleur'], $data['direction']);
+    }
 }
 ?>

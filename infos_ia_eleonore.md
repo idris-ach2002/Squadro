@@ -31,3 +31,15 @@ Voici la liste des méthodes que tu dois implémenter :
 - initBlancEst
 - initBlancOuest
 ```
+
+
+
+```
+Maintenant, il faut que tu me développes les méthodes suivantes : 
+- toJSon : qui doit retourner un String, elle permet de formater notre objet PieceSquadro comme un fichier JSon
+- fromJSon : qui prend en paramètre un String (le json a reformatter), elle retorune une PieceSquadro à partir de ce qui a été mis en paramètre
+
+fromJSon est une méthode static
+
+toJson et fromJSon doivent etre public
+```
