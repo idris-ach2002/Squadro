@@ -48,15 +48,30 @@ class PieceSquadro {
 
     // Méthode toJson
     public function toJson(): string {
-        return json_encode([
+        $json = json_encode([
             'couleur' => $this->couleur,
             'direction' => $this->direction
         ]);
+
+        if ($json === false) {
+            throw new \RuntimeException('Erreur lors de l\'encodage JSON : ' . json_last_error_msg());
+        }
+
+        return $json;
     }
 
     // Méthode fromJson
     public static function fromJson(string $json): PieceSquadro {
         $data = json_decode($json, true);
+
+        if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+            throw new \InvalidArgumentException('Erreur lors du décodage JSON : ' . json_last_error_msg());
+        }
+
+        if (!isset($data['couleur']) || !isset($data['direction'])) {
+            throw new \InvalidArgumentException('Données JSON invalides pour créer une PieceSquadro');
+        }
+
         return new self($data['couleur'], $data['direction']);
     }
 }

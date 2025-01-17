@@ -16,6 +16,8 @@ Dis moi lorsque tu auras lu ce texte, et si tu l'as compris. Ensuite, je te demd
 Dis moi quand tu es prêt.
 ```
 
+Ce premier prompt permet à l'IA de connaitre le projet sur lequel nous travaillons. Il lui explique les règles, le fonctionnement, et ce qui est attendu.
+
 
 ```
 Bien, maintenant, je vais te demander de me développer le code PHP des méthodes d'initilisation de la classe PieceSquadro.
@@ -32,6 +34,9 @@ Voici la liste des méthodes que tu dois implémenter :
 - initBlancOuest
 ```
 
+L'IA a bien développé le code attendu. Les méthodes sont bien avec la bonne visibilité, et les méthodes devant être statiques le sont bien aussi. 
+Ensuite, l'IA a bien fait des `return` dans ces différentes méthodes, avec la création de notre objet.
+
 
 
 ```
@@ -43,3 +48,5 @@ fromJSon est une méthode static
 
 toJson et fromJSon doivent etre public
 ```
+
+L'IA a bien développé le code attendu pour ces deux méthodes. Cependant, elle n'a pas vérifié les exceptions que pourraient retourner ces deux méthodes.
