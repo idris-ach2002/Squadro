@@ -17,6 +17,17 @@ Dis moi quand tu es prêt.
 ```
 
 
+```
 Bien, maintenant, je vais te demander de me développer le code PHP des méthodes d'initilisation de la classe PieceSquadro.
 Cette classe gère à la fois les pièces du jeu et les emplacements du plateau. On considère donc également les emplacements vides et neutres du plateau comme des pièces. Ainsi, une pièce (ou une case du plateau) est caractérisée par une couleur et une direction. Pour les représenter, on utilise des constantes entières : BLANC, NOIR, VIDE, NEUTRE, NORD, EST, SUD et OUEST. Le constructeur est privé pour imposer l'utilisation des méthodes statiques initVide, initNoirNord, etc. pour générer des pièces correctes à l'aide des constantes de classe.
 
+Ici, je veux que tu me développes les méthodes d'initialisation de ces pièces. Ces méthodes doivent être static et public. Chacune d'entre elle doit retourner une PieceSquadro
+
+Voici la liste des méthodes que tu dois implémenter : 
+- initVide
+- initNeutre
+- initNoirNord
+- initNoirSud
+- initBlancEst
+- initBlancOuest
+```
