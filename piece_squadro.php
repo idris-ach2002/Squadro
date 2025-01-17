@@ -14,4 +14,19 @@ class PieceSquadro {
     protected int couleur;
     protected int direction;
 
+    public function  __construct(int $couleur, it $direction) {
+        $this->couleur = $couleur;
+        $this->direction = direction;
+    }
+
+    public function getCouleur() : int {
+        return this->couleur;
+    }
+
+    public function getDirection() : int {
+        return this->direction;
+    }
+
+
+
 }
