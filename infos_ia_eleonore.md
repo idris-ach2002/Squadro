@@ -50,3 +50,40 @@ toJson et fromJSon doivent etre public
 ```
 
 L'IA a bien développé le code attendu pour ces deux méthodes. Cependant, elle n'a pas vérifié les exceptions que pourraient retourner ces deux méthodes.
+
+
+
+```
+Maintenant, nous allons passer à la classe PlateauSquadro. Cette classe permet de gérer le plateau de jeu. 
+
+Cette fois, je vais te demander de code cette classe. 
+Cette classe contient les attributs suivants : 
+- BLANC_V_ALLER : constante qui doivent avoir les valeurs suivantes : {0, 1, 3, 2, 3, 1, 0}
+- NOIR_V_RETOUR : constante qui doivent avoir les valeurs suivantes : {0, 1, 3, 2, 3, 1, 0}
+- BLANC_V_RETOUR : constante qui doivent avoir les valeurs suivantes : {0, 3, 1, 2, 1, 3, 0}
+- NOIR_V_ALLER : constante qui doivent avoir les valeurs suivantes : {0, 3, 1, 2, 1, 3, 0}
+- plateau : un tableau qui doit avoir 7 instances d'ArrayPieceSquadro (un par ligne), la première ligne est la ligne de retournement des pièces noires, la septième ligne est la ligne de départ des pièces noires. Les colonnes sont organisées selon le même principe : la première colonne contient les cases de départ des pièces blanches...
+- lignesJouables : tableau qui doit être initialiser avec les valeurs suivantes : {1, 2, 3, 4, 5}
+- colonnesJouables : tableau qui doit être initialiser avec les valeurs suivantes : {1, 2, 3, 4, 5}
+
+Ici, lignesJouables et colonnesJouables ne sont pas des constantes. 
+
+BLANC_V_ALLER, NOIR_V_RETOUR, BLANC_V_RETOUR, NOIR_V_ALLER sont des constantes public
+plateau, lignesJouables et colonnesJouables sont des des attributs privés
+
+
+Ensuite, tu trouveras en image le diagramme de classe, tu auras donc seulement la classe PlateauSquadro. Dans cette dernière, tu devras coder les différentes méthodes et constructeurs. 
+Le moins signifie privé, le plus public, et lorsqu'elles sont soulignés, elles sont statics. Dans les parenthèses, se sont les paramètres des méthodes,et après les : le type de retour (void signifie qu'elle ne doit rien retourner)
+
+
+Les tableaux lignesJouables et colonnesJouables indiquent les indices des lignes et des colonnes des pièces encore en jeu (n'ayant pas fini leur aller-retour).
+
+Le constructeur par défaut produit le plateau à son état initial ; il utilisent les méthodes privées initCasesVides, initCasesNeutres, ... 
+
+Les méthodes retireLigneJouable() et retireColonneJouable() éliminent respectivement l'index passé en paramètres des tableaux lignesjouables et colonnesJouables.
+
+La méthode getCoordDestination() calcule les coordonnées de déplacement de la pièce située en (x,y) ; la méthode  getDestination() retourne la pièce située aux coordonnées calculées par la méthode précédente.
+
+
+Si tu as compris toutes les consignes, je te laisse faire ce code php.
+```
