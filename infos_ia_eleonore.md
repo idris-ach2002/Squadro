@@ -108,3 +108,22 @@ Toutes ces méthodes doivent etre public, et seul la méthode fromJson doit etre
 ```
 
 Après ce prompt, l'IA a codé correctement les différentes méthodes à ajouter.
+
+
+```
+Maintenant, tu vas écrire la classe php ArrayPieceSquadro
+
+Cette classe ArrayPieceSquadro va nous permettre de manipuler plus facilement les pièces du jeux regroupées dans un tableau. Elle implémente deux interfaces : ArrayAccess et Countable.
+
+Dans l'image jointe, tu pourras retrouver l'attribut privé pieces, qui est un tableau de PieceSquadro. 
+
+Ensuite, il faudra bien évidemment que tu implémentes les méthodes de ces interfaces
+
+add prend en paramètre une piece de type PieceSquadro, et remove un index. Les deux méthodes sont publics et ne retournent rien.
+
+Ensuite, il faudra que tu écrives la méthode _toString
+
+Et enfin, comme les deux dernières classes, crées la méthode toJson qui permet de créer une string sous format json et la retournes, et une méthode static fromJson qui prend en paramètre une string sous format json, qui retournes un type ArrayPieceSquadro. Ces deux méthodes sont publics
+```
+
+L'IA a bien écrit le code fourni.
