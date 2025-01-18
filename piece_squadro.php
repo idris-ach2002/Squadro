@@ -137,4 +137,60 @@ class PieceSquadro {
         return new self($data['couleur'], $data['direction']);
     }
 }
+
+
+
+    // ____________________________Les Tests ____________________________________
+
+
+    $pieceJson = array();
+    function genererPiece() : array {
+        $res = array();
+        $piece1 = PieceSquadro::initBlancOuest();
+        $piece2 = PieceSquadro::initBlancEst();
+        $piece3 = PieceSquadro::initNoirSud();
+        $piece4 = PieceSquadro::initNoirNord();
+        $piece5 = PieceSquadro::initVide();
+        $piece6 = PieceSquadro::initNeutre();
+        
+        array_push($res, $piece1,$piece2,$piece3,$piece4,$piece5,$piece6);
+        return $res;
+    }
+
+    // tableau représentant toutes les combinaison des pièces
+    $pieces = genererPiece();
+
+    echo count($pieces) ."<br/>";
+
+
+    //affichage des pièces
+    foreach($pieces as $p) {
+        echo($p . "<br/>");
+    }
+
+    //inverser la direction des pièces
+    foreach($pieces as $p) {
+        $p->inverseDirection();
+    }
+
+    //affichage des pièces
+    foreach($pieces as $p) {
+        echo($p . "<br/>");
+    }
+
+    echo("<br/>");
+
+    //tranformation des pièces au format json
+    foreach($pieces as $p) {
+        array_push($pieceJson, $p->toJson());
+    }
+
+    print_r($pieceJson);
+
+    echo("<br/>");
+
+    //l'opération inverse
+    foreach($pieceJson as $pJson) {
+       print(PieceSquadro::fromJson($pJson) ."<br/>");
+    };
 ?>
