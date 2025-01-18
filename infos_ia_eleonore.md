@@ -87,3 +87,43 @@ La méthode getCoordDestination() calcule les coordonnées de déplacement de la
 
 Si tu as compris toutes les consignes, je te laisse faire ce code php.
 ```
+
+1. Les attribiuts : 
+    1. les constantes n'ont pas été mises à static (erreur de ma part, car je n'avais pas préciser cette information à l'IA).
+    2. les attributs ont bien été défini comme demander
+2. Le construct : le constructeur initialise bien les cases à vides et les neutres. Cependant, il a créé une fonction en plus car je ne lui avais rien dit sur le faite qu'il ne devait pas créer de nouvelles fonctions, qu'il devait se tenir au diagramme UML ennoncé.
+    1. La ligne de code suivante écrite par l'IA : `$this->plateau[0][$i] = PieceSquadro::initNoirSud();` est incorrecte. En effet, je lui ai dit que le fonctionnement des pièces, cependant, je ne lui ai pas indiqué que seul la ligne et colonne 7 devait être initialiser dans le tableau.
+3. Les méthodes `retireLigneJouable` et `retireColonneJouable` n'ont pas été écrite correctement car elles n'avaient pas été bien écrites
+4. Les méthodes getPLateau, get et set Piece, getColonne/LignesJouables, to/fromJSon, toString n'ont pas été faite par l'IA, car je n'ai pas expliqué ce que devait faire l'IA.
+
+
+```
+Maintenant, écris moi comme pour la classe pieceSquadro les méthodes toJson (public qui retournes la chaine du formattage de l'objet), la méthode fromJson (public et static qui prend une chaine sous format json, qui va retourner l'objet en question), et la méthode _toString de php
+
+Ensuite, fait les méthodes getLignesJouables et getColonnesJouables, qui retournes les attributs en question, la méthode getPlateau qui retournes l'attribut plateau
+
+Puis, les méthodes getPiece qui prend en paramètre l'indice de la ligne et de la colonne de la piece a retourner (doit retourner une PieceSquadro), et enfin, la méthode setPiece qui prend en paramètre une piece PieceSquadro, la position sur la ligne et la colonne de là où la pièce doit être mise. 
+
+Toutes ces méthodes doivent etre public, et seul la méthode fromJson doit etre une méthode static
+```
+
+Après ce prompt, l'IA a codé correctement les différentes méthodes à ajouter.
+
+
+```
+Maintenant, tu vas écrire la classe php ArrayPieceSquadro
+
+Cette classe ArrayPieceSquadro va nous permettre de manipuler plus facilement les pièces du jeux regroupées dans un tableau. Elle implémente deux interfaces : ArrayAccess et Countable.
+
+Dans l'image jointe, tu pourras retrouver l'attribut privé pieces, qui est un tableau de PieceSquadro. 
+
+Ensuite, il faudra bien évidemment que tu implémentes les méthodes de ces interfaces
+
+add prend en paramètre une piece de type PieceSquadro, et remove un index. Les deux méthodes sont publics et ne retournent rien.
+
+Ensuite, il faudra que tu écrives la méthode _toString
+
+Et enfin, comme les deux dernières classes, crées la méthode toJson qui permet de créer une string sous format json et la retournes, et une méthode static fromJson qui prend en paramètre une string sous format json, qui retournes un type ArrayPieceSquadro. Ces deux méthodes sont publics
+```
+
+L'IA a bien écrit le code fourni.

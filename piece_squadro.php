@@ -21,7 +21,7 @@ class PieceSquadro {
         $this->direction = $direction;
     }
 
-              /**
+    /**
      * renvoie la couleur de la pièce .
      *
      * @return int
@@ -140,6 +140,7 @@ class PieceSquadro {
 
 
 
+
     // ____________________________Les Tests ____________________________________
 
 
@@ -194,3 +195,4 @@ class PieceSquadro {
        print(PieceSquadro::fromJson($pJson) ."<br/>");
     };
 ?>
+
