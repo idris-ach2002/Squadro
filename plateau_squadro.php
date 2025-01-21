@@ -1,6 +1,8 @@
 <?php
+    require_once 'PieceSquadro.php';
 
 class PlateauSquadro {
+
     // Constantes
     public const BLANC_V_ALLER = [0, 1, 3, 2, 3, 1, 0];
     public const NOIR_V_RETOUR = [0, 1, 3, 2, 3, 1, 0];
@@ -66,23 +68,45 @@ class PlateauSquadro {
 
     public function getCoordDestination(int $x, int $y): array {
         $piece = $this->plateau[$x][$y];
-        $vitesse = ($piece->couleur === PieceSquadro::BLANC) ? self::BLANC_V_ALLER[$x] : self::NOIR_V_ALLER[$y];
-        $direction = $piece->direction;
-
+        $vitesse = ($piece->getCouleur() === PieceSquadro::BLANC) ? 
+                   (($piece->getDirection() === PieceSquadro::EST) ? self::BLANC_V_ALLER[$x] : self::BLANC_V_RETOUR[$x]) : 
+                   (($piece->getDirection() === PieceSquadro::NORD) ? self::NOIR_V_RETOUR[$y] : self::NOIR_V_ALLER[$y]);
+        $direction = $piece->getDirection();
+        $destX = $x;
+        $destY = $y;
+    
         switch ($direction) {
             case PieceSquadro::NORD:
-                return [$x - $vitesse, $y];
+                $destX = max(0, $x - $vitesse);
+                if ($destX === 0) {
+                    $piece->inverseDirection();
+                }
+                break;
             case PieceSquadro::EST:
-                return [$x, $y + $vitesse];
+                $destY = min(6, $y + $vitesse);
+                if ($destY === 6) {
+                    $piece->inverseDirection();
+                }
+                break;
             case PieceSquadro::SUD:
-                return [$x + $vitesse, $y];
+                $destX = min(6, $x + $vitesse);
+                if ($destX === 6) {
+                    $piece->inverseDirection();
+                }
+                break;
             case PieceSquadro::OUEST:
-                return [$x, $y - $vitesse];
+                $destY = max(0, $y - $vitesse);
+                if ($destY === 0) {
+                    $piece->inverseDirection();
+                }
+                break;
             default:
                 throw new \InvalidArgumentException('Direction invalide');
         }
+    
+        return [$destX, $destY];
     }
-
+    
     public function getDestination(int $x, int $y): PieceSquadro {
         [$destX, $destY] = $this->getCoordDestination($x, $y);
         return $this->plateau[$destX][$destY];
@@ -145,4 +169,73 @@ class PlateauSquadro {
         $this->plateau[$ligne][$colonne] = $piece;
     }
 }
+
+
+    // Générer un plateau
+    $plateau = new PlateauSquadro();
+
+    // Test 1 : Vérification de l'initialisation du plateau
+    echo "Test 1 : Initialisation du plateau<br/>";
+    $plateauInit = $plateau->getPlateau();
+    foreach ($plateauInit as $ligne) {
+        foreach ($ligne as $case) {
+            echo $case . " ";
+        }
+        echo "<br/>";
+    }
+
+    // Test 2 : Vérification des lignes et colonnes jouables
+    echo "<br/>Test 2 : Lignes et colonnes jouables<br/>";
+    print_r($plateau->getLignesJouables());
+    print_r($plateau->getColonnesJouables());
+
+    // Test 3 : Retrait de lignes et colonnes jouables
+    echo "<br/>Test 3 : Retrait de lignes et colonnes jouables  ligne 1 colonne 5<br/>";
+    $plateau->retireLigneJouable(1);
+    $plateau->retireColonneJouable(5);
+    print_r($plateau->getLignesJouables());
+    print_r($plateau->getColonnesJouables());
+
+    // Test 4 : Vérification de la destination
+    echo "<br/>Test 4 : Destination d'une pièce<br/>";
+    $destCoords = $plateau->getCoordDestination(6, 1); // Coordonnées initiales
+    echo "Destination de (6, 1) : (" . $destCoords[0] . ", " . $destCoords[1] . ")\n";
+
+    // Test 5 : Modifier une pièce et vérifier la modification
+    echo "<br/>Test 5 : Modification d'une pièce<br/>";
+    $newPiece = PieceSquadro::initBlancEst();
+    $plateau->setPiece($newPiece, 1, 1);
+    echo "<br/>Nouvelle pièce en (1, 1) : " . $plateau->getPiece(1, 1) . "<br/>";
+
+    // Test 6 : Conversion en JSON
+    echo "<br/>Test 6 : Conversion en JSON<br/>";
+    $json = $plateau->toJson();
+    echo $json . "<br/>";
+
+    // Test 7 : Récupération depuis JSON
+    echo "<br/>Test 7 : Récupération depuis JSON<br/>";
+    $newPlateau = PlateauSquadro::fromJson($json);
+    print_r($newPlateau->getLignesJouables());
+    print_r($newPlateau->getColonnesJouables());
+
+    // Test 8 : Cas limite - pièce en dehors des limites
+    echo "<br/>Test 8 : Cas limite (coordonnées hors limite)<br/>";
+    try {
+        $plateau->getCoordDestination(7, 1); // Coordonnées hors limite
+    } catch (\InvalidArgumentException $e) {
+        echo "Erreur détectée : " . $e->getMessage() . "<br/>";
+    }
+
+    // Test 9 : Cas limite - JSON mal formé
+    echo "<br/>Test 9 : Cas limite (JSON mal formé)<br/>";
+    try {
+        PlateauSquadro::fromJson('{"invalid": "data"}');
+    } catch (\InvalidArgumentException $e) {
+        echo "Erreur détectée : " . $e->getMessage() . "<br/>";
+    }
+
+    // Test 10 : Vérification de la méthode __toString
+    echo "<br/>Test 10 : Méthode __toString<br/>";
+    echo $plateau . "<br/>";
+
 ?>
