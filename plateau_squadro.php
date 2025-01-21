@@ -1,5 +1,5 @@
 <?php
-    require_once 'PieceSquadro.php';
+    require_once 'piece_squadro.php';
 
 class PlateauSquadro {
 
