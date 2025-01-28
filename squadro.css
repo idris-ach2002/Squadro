@@ -1,0 +1,184 @@
+body {
+    background-color: #ccc;
+}
+
+.app {
+    display: grid;
+    width: 1000px;
+    height: 1000px;
+    margin:  auto;
+    grid-template-columns: repeat(9,100px);
+    grid-template-rows: repeat(9,100px);
+
+    grid-template-areas: 
+    "zone1  zone2  zone3  zone4  zone5  zone6  zone7   zone8  zone9"
+
+    "zone10   zone11 zone12 zone13 zone14 zone15 zone16 zone17   zone18"
+    "zone19   zone20 zone21 zone22 zone23 zone24 zone25 zone26   zone27"
+    "zone28   zone29 zone30 zone31 zone32 zone33 zone34 zone35   zone36"
+    "zone37   zone38 zone39 zone40 zone41 zone42 zone43 zone44   zone45"
+    "zone46   zone47 zone48 zone49 zone50 zone51 zone52 zone53   zone54"
+    "zone55   zone56 zone57 zone58 zone59 zone60 zone61 zone62   zone63"
+    "zone64   zone65 zone66 zone67 zone68 zone69 zone70 zone71   zone72"
+
+    "zone73 zone74 zone75 zone76 zone77 zone78 zone79 zone80 zone81";
+}
+
+
+#btn1 , #btn9, #btn17, #btn25{
+    width: 80%;
+    height: 80%; 
+    margin: auto;
+    background-color: red;
+    box-shadow:     inset 0 -3em 3em rgb(0 200 0 / 30%),
+                    0 0 0 2px white,
+                    0.3em 0.3em 1em rgb(200 0 0 / 60%);
+}
+
+
+#btn1 { grid-area: zone1; }
+#btn2 { height: 90%; margin: auto;  grid-area: zone2; }
+#btn3 { height: 90%; margin: auto;  grid-area: zone3; }
+#btn4 { height: 90%; margin: auto;  grid-area: zone4; }
+#btn5 { height: 90%; margin: auto;  grid-area: zone5; }
+#btn6 { height: 90%; margin: auto;  grid-area: zone6; }
+#btn7 { height: 90%; margin: auto;  grid-area: zone7; }
+#btn8 { height: 90%; margin: auto;  grid-area: zone8; }
+#btn9 { grid-area: zone9; }
+
+#btn10 { width: 90%; margin: auto; grid-area: zone18; }
+#btn11 { width: 90%; margin: auto; grid-area: zone27; }
+#btn12 { width: 90%; margin: auto; grid-area: zone36; }
+#btn13 { width: 90%; margin: auto; grid-area: zone45; }
+#btn14 { width: 90%; margin: auto; grid-area: zone54; }
+#btn15 { width: 90%; margin: auto; grid-area: zone63; }
+#btn16 { width: 90%; margin: auto; grid-area: zone72; }
+
+#btn17 { grid-area: zone81; }
+#btn18 { height: 90%; margin: auto; grid-area: zone80; }
+#btn19 { height: 90%; margin: auto; grid-area: zone79; }
+#btn20 { height: 90%; margin: auto; grid-area: zone78; }
+#btn21 { height: 90%; margin: auto; grid-area: zone77; }
+#btn22 { height: 90%; margin: auto; grid-area: zone76; }
+#btn23 { height: 90%; margin: auto; grid-area: zone75; }
+#btn24 { height: 90%; margin: auto; grid-area: zone74; }
+#btn25 { grid-area: zone73; }
+
+#btn26 { width: 90%; margin: auto; grid-area: zone64; }
+#btn27 { width: 90%; margin: auto; grid-area: zone55; }
+#btn28 { width: 90%; margin: auto; grid-area: zone46; }
+#btn29 { width: 90%; margin: auto; grid-area: zone37; }
+#btn30 { width: 90%; margin: auto; grid-area: zone28; }
+#btn31 { width: 90%; margin: auto; grid-area: zone19; }
+#btn32 { width: 90%; margin: auto; grid-area: zone10; }
+
+#btn0-0 { grid-area: zone11; }
+#btn0-1 { grid-area: zone12; }
+#btn0-2 { grid-area: zone13; }
+#btn0-3 { grid-area: zone14; }
+#btn0-4 { grid-area: zone15; }
+#btn0-5 { grid-area: zone16; }
+#btn0-6 { grid-area: zone17; }
+#btn1-0 { grid-area: zone20; }
+#btn1-1 { grid-area: zone21; }
+#btn1-2 { grid-area: zone22; }
+#btn1-3 { grid-area: zone23; }
+#btn1-4 { grid-area: zone24; }
+#btn1-5 { grid-area: zone25; }
+#btn1-6 { grid-area: zone26; }
+#btn2-0 { grid-area: zone29; }
+#btn2-1 { grid-area: zone30; }
+#btn2-2 { grid-area: zone31; }
+#btn2-3 { grid-area: zone32; }
+#btn2-4 { grid-area: zone33; }
+#btn2-5 { grid-area: zone34; }
+#btn2-6 { grid-area: zone35; }
+#btn3-0 { grid-area: zone38; }
+#btn3-1 { grid-area: zone39; }
+#btn3-2 { grid-area: zone40; }
+#btn3-3 { grid-area: zone41; }
+#btn3-4 { grid-area: zone42; }
+#btn3-5 { grid-area: zone43; }
+#btn3-6 { grid-area: zone44; }
+#btn4-0 { grid-area: zone47; }
+#btn4-1 { grid-area: zone48; }
+#btn4-2 { grid-area: zone49; }
+#btn4-3 { grid-area: zone50; }
+#btn4-4 { grid-area: zone51; }
+#btn4-5 { grid-area: zone52; }
+#btn4-6 { grid-area: zone53; }
+#btn5-0 { grid-area: zone56; }
+#btn5-1 { grid-area: zone57; }
+#btn5-2 { grid-area: zone58; }
+#btn5-3 { grid-area: zone59; }
+#btn5-4 { grid-area: zone60; }
+#btn5-5 { grid-area: zone61; }
+#btn5-6 { grid-area: zone62; }
+#btn6-0 { grid-area: zone65; }
+#btn6-1 { grid-area: zone66; }
+#btn6-2 { grid-area: zone67; }
+#btn6-3 { grid-area: zone68; }
+#btn6-4 { grid-area: zone69; }
+#btn6-5 { grid-area: zone70; }
+#btn6-6 { grid-area: zone71; }
+
+
+
+input[type="button"], input[type="submit"] {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+}
+
+input[type='submit'], input[type='button'] {
+    border: solid #000000 1px;
+}
+
+input[type="button"]:disabled, input[type="submit"]:disabled {
+    cursor: not-allowed;
+}
+
+
+input.red {
+    background-color: #e26767;
+    color: black;
+}
+
+input.white {
+    background-color: #ffffff;
+    color: black;
+}
+
+input.black {
+    background-color: #000000;
+    color: white;
+}
+
+input[value='NN'] {
+    border-top: solid red 5px;
+}
+
+input[value='NS'] {
+    border-bottom: solid red 5px;
+}
+
+input[value='BE'] {
+    border-right: solid blue 5px;
+}
+
+input[value='BW'] {
+    border-left: solid blue 5px;
+}
+
+input.vide {
+    background-color: #a9a9a9;
+}
+
+input.neutre {
+    background-color: #3a3737;
+}
+

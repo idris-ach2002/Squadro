@@ -1,18 +1,44 @@
 <?php
 require_once('piece_squadro.php');
+/**
+ * Classe représentant un tableau de pièces Squadro avec une implémentation de ArrayAccess et Countable.
+ * Permet de gérer les pièces comme un tableau tout en validant les types et en fournissant des méthodes utiles.
+ */
 class ArrayPieceSquadro implements ArrayAccess, Countable {
-    // Attribut privé
+    /**
+     * @var array Liste des pièces Squadro.
+     */
     private array $pieces = [];
 
-    // Implémentation de ArrayAccess
+    /**
+     * Vérifie si une pièce existe à un indice donné.
+     *
+     * @param mixed $offset L'indice de l'élément à vérifier.
+     * @return bool True si la pièce existe, false sinon.
+     */
     public function offsetExists($offset): bool {
         return isset($this->pieces[$offset]);
     }
 
+    /**
+     * Récupère une pièce à un indice donné.
+     *
+     * @param mixed $offset L'indice de la pièce à récupérer.
+     * @return PieceSquadro La pièce à l'indice donné.
+     * @throws \OutOfBoundsException Si l'indice n'existe pas.
+     */
     public function offsetGet($offset): PieceSquadro {
         return $this->pieces[$offset];
     }
 
+    /**
+     * Définit une pièce à un indice donné.
+     *
+     * @param mixed $offset L'indice où placer la pièce.
+     * @param mixed $value La pièce à ajouter.
+     * @return void
+     * @throws InvalidArgumentException Si la valeur n'est pas une instance de PieceSquadro.
+     */
     public function offsetSet($offset, $value): void {
         if (!$value instanceof PieceSquadro) {
             throw new InvalidArgumentException('La valeur doit être une instance de PieceSquadro');
@@ -24,31 +50,60 @@ class ArrayPieceSquadro implements ArrayAccess, Countable {
         }
     }
 
+    /**
+     * Supprime une pièce à un indice donné.
+     *
+     * @param mixed $offset L'indice de la pièce à supprimer.
+     * @return void
+     */
     public function offsetUnset($offset): void {
         unset($this->pieces[$offset]);
     }
 
-    // Implémentation de Countable
+    /**
+     * Compte le nombre de pièces dans le tableau.
+     *
+     * @return int Le nombre de pièces.
+     */
     public function count(): int {
         return count($this->pieces);
     }
 
-    // Méthode add
+    /**
+     * Ajoute une pièce à la fin du tableau.
+     *
+     * @param PieceSquadro $piece La pièce à ajouter.
+     * @return void
+     */
     public function add(PieceSquadro $piece): void {
         $this->pieces[] = $piece;
     }
 
-    // Méthode remove
+    /**
+     * Supprime une pièce à un indice donné.
+     *
+     * @param int $index L'indice de la pièce à supprimer.
+     * @return void
+     */
     public function remove(int $index): void {
         unset($this->pieces[$index]);
     }
 
-    // Méthode __toString
+    /**
+     * Retourne la représentation JSON de l'objet.
+     *
+     * @return string La chaîne JSON représentant les pièces.
+     */
     public function __toString(): string {
         return $this->toJson();
     }
 
-    // Méthode toJson
+    /**
+     * Convertit l'objet en une chaîne JSON.
+     *
+     * @return string La représentation JSON des pièces.
+     * @throws \RuntimeException Si une erreur survient lors de l'encodage JSON.
+     */
     public function toJson(): string {
         $piecesJson = [];
         foreach ($this->pieces as $key => $piece) {
@@ -56,9 +111,14 @@ class ArrayPieceSquadro implements ArrayAccess, Countable {
         }
         return json_encode($piecesJson);
     }
-    
 
-    // Méthode fromJson
+    /**
+     * Reconstruit un objet ArrayPieceSquadro à partir d'une chaîne JSON.
+     *
+     * @param string $json La chaîne JSON représentant les pièces.
+     * @return ArrayPieceSquadro L'instance de ArrayPieceSquadro reconstruite.
+     * @throws \InvalidArgumentException Si le JSON est invalide ou s'il y a une erreur de décodage.
+     */
     public static function fromJson(string $json): ArrayPieceSquadro {
         $data = json_decode($json, true);
         if ($data === null) {
@@ -72,8 +132,8 @@ class ArrayPieceSquadro implements ArrayAccess, Countable {
         }
         return $arrayPieceSquadro;
     }
-    
 }
+
 
     // Initialisation des tests
     echo "=== Tests pour ArrayPieceSquadro ===\n";

@@ -1,114 +1,162 @@
 <?php
-    require_once 'piece_squadro.php';
-    require_once 'plateau_squadro.php';
+/**
+ * Classe représentant une action dans le jeu Squadro.
+ * Permet de manipuler les pièces sur le plateau et de gérer les règles du jeu.
+ */
+require_once 'piece_squadro.php';
+require_once 'plateau_squadro.php';
 
-    class ActionSquadro {
-        private PlateauSquadro $plateau;
+class ActionSquadro {
+    /** @var PlateauSquadro $plateau Plateau sur lequel les actions sont effectuées. */
+    private PlateauSquadro $plateau;
 
-        public function __construct(PlateauSquadro $plateau) {
-            $this->plateau = $plateau;
+    /**
+     * Constructeur.
+     * 
+     * @param PlateauSquadro $plateau Instance du plateau de jeu.
+     */
+    public function __construct(PlateauSquadro $plateau) {
+        $this->plateau = $plateau;
+    }
+
+    /**
+     * Vérifie si une pièce peut être jouée à une position donnée.
+     * 
+     * @param int $ligne Ligne de la pièce.
+     * @param int $colonne Colonne de la pièce.
+     * @return bool True si la pièce peut être jouée, sinon False.
+     */
+    public function estJouablePiece(int $ligne, int $colonne): bool {
+        $piece = $this->plateau->getPiece($ligne, $colonne);
+        if ($piece->getCouleur() === PieceSquadro::VIDE) {
+            return false;
         }
 
-        public function estJouablePiece(int $ligne, int $colonne): bool {
-            $piece = $this->plateau->getPiece($ligne, $colonne);
-            if ($piece->getCouleur() === PieceSquadro::VIDE) {
-                return false;
+        $destination = $this->plateau->getCoordDestination($ligne, $colonne);
+        [$destLigne, $destColonne] = $destination;
+
+        return $destLigne >= 0 && $destLigne < 7 &&
+            $destColonne >= 0 && $destColonne < 7 &&
+            $this->plateau->getPiece($destLigne, $destColonne)->getCouleur() === PieceSquadro::VIDE;
+    }
+
+    /**
+     * Déplace une pièce sur le plateau si elle est jouable.
+     * 
+     * @param int $ligne Ligne actuelle de la pièce.
+     * @param int $colonne Colonne actuelle de la pièce.
+     * @return bool True si la pièce a été déplacée, sinon False.
+     */
+    public function jouePiece(int $ligne, int $colonne): bool {
+        if (!$this->estJouablePiece($ligne, $colonne)) {
+            return false;
+        }
+        
+        $piece = $this->plateau->getPiece($ligne, $colonne);
+        $destination = $this->plateau->getCoordDestination($ligne, $colonne);
+        [$destLigne, $destColonne] = $destination;
+        
+        // Déplacement de la pièce
+        $this->plateau->setPiece($piece, $destLigne, $destColonne);
+        $this->plateau->setPiece(PieceSquadro::initVide(), $ligne, $colonne);
+        
+        // Gestion du retournement ou de la sortie
+        if ($piece->getCouleur() === PieceSquadro::NOIR) {
+            if ($piece->direction === PieceSquadro::NORD && $destLigne === 6) {
+                $piece->direction = PieceSquadro::SUD;
+            } elseif ($piece->direction === PieceSquadro::SUD && $destLigne === 0) {
+                $this->sortPiece($piece->getCouleur(), $destColonne);
             }
-
-            $destination = $this->plateau->getCoordDestination($ligne, $colonne);
-            [$destLigne, $destColonne] = $destination;
-
-            return $destLigne >= 0 && $destLigne < 7 &&
-                $destColonne >= 0 && $destColonne < 7 &&
-                $this->plateau->getPiece($destLigne, $destColonne)->getCouleur() === PieceSquadro::VIDE;
         }
 
-        public function jouePiece(int $ligne, int $colonne): bool {
-            if (!$this->estJouablePiece($ligne, $colonne)) {
-                return false;
+        if ($piece->getCouleur() === PieceSquadro::BLANC) {
+            if ($piece->direction === PieceSquadro::EST && $destColonne === 6) {
+                $piece->direction = PieceSquadro::OUEST;
+            } elseif ($piece->direction === PieceSquadro::OUEST && $destColonne === 0) {
+                $this->sortPiece($piece->getCouleur(), $destLigne);
             }
-        
-            $piece = $this->plateau->getPiece($ligne, $colonne);
-            $destination = $this->plateau->getCoordDestination($ligne, $colonne);
-            [$destLigne, $destColonne] = $destination;
-        
-            // Déplacement de la pièce
-            $this->plateau->setPiece($piece, $destLigne, $destColonne);
-            $this->plateau->setPiece(PieceSquadro::initVide(), $ligne, $colonne);
-        
-            // Gérer le retournement ou la sortie pour les pièces noires
-            if ($piece->getCouleur() === PieceSquadro::NOIR) {
-                if ($piece->direction === PieceSquadro::NORD && $destLigne === 6) {
-                    // Fin de l'aller, inverser la direction vers le sud
-                    $piece->direction = PieceSquadro::SUD;
-                } elseif ($piece->direction === PieceSquadro::SUD && $destLigne === 0) {
-                    // Fin du retour, retirer la pièce du plateau
-                    $this->sortPiece($piece->getCouleur(), $destColonne);
+        }
+
+        // Gestion des reculs
+        $this->gererReculs($piece, $ligne, $colonne, $destLigne, $destColonne);
+
+        return true;
+    }
+
+    /**
+     * Reculer une pièce sur le plateau.
+     * 
+     * @param int $ligne Ligne actuelle de la pièce.
+     * @param int $colonne Colonne actuelle de la pièce.
+     * @return bool True si la pièce a été reculée, sinon False.
+     */
+    public function reculePiece(int $ligne, int $colonne): bool {
+        $piece = $this->plateau->getPiece($ligne, $colonne);
+        if ($piece->getCouleur() === PieceSquadro::VIDE) {
+            return false;
+        }
+
+        if ($piece->direction === PieceSquadro::NORD) {
+            $this->plateau->setPiece($piece, 6, $colonne);
+        } elseif ($piece->direction === PieceSquadro::SUD) {
+            $this->plateau->setPiece($piece, 0, $colonne);
+        } elseif ($piece->direction === PieceSquadro::EST) {
+            $this->plateau->setPiece($piece, $ligne, 0);
+        } elseif ($piece->direction === PieceSquadro::OUEST) {
+            $this->plateau->setPiece($piece, $ligne, 6);
+        }
+
+        $piece->inverseDirection();
+
+        return true;
+    }
+
+    /**
+     * Retire une pièce du plateau lorsqu'elle atteint sa position finale.
+     * 
+     * @param int $couleur Couleur de la pièce (NOIR ou BLANC).
+     * @param int $rang Rang de la pièce sur le plateau.
+     */
+    public function sortPiece(int $couleur, int $rang): void {
+        if ($couleur === PieceSquadro::NOIR) {
+            $this->plateau->setPiece(PieceSquadro::initVide(), 6, $rang);
+        } elseif ($couleur === PieceSquadro::BLANC) {
+            $this->plateau->setPiece(PieceSquadro::initVide(), $rang, 0);
+        }
+    }
+
+    /**
+     * Vérifie si une couleur a remporté la victoire.
+     * 
+     * @param int $couleur Couleur de la pièce (NOIR ou BLANC).
+     * @return bool True si la victoire est remportée, sinon False.
+     */
+    public function remporteVictoire(int $couleur): bool {
+        if ($couleur === PieceSquadro::NOIR) {
+            foreach ($this->plateau->getPlateau()[6] as $piece) {
+                if ($piece->getCouleur() === PieceSquadro::NOIR) {
+                    return false;
                 }
             }
-        
-            // Gérer le retournement ou la sortie pour les pièces blanches
-            if ($piece->getCouleur() === PieceSquadro::BLANC) {
-                if ($piece->direction === PieceSquadro::EST && $destColonne === 6) {
-                    // Fin de l'aller, inverser la direction vers l'ouest
-                    $piece->direction = PieceSquadro::OUEST;
-                } elseif ($piece->direction === PieceSquadro::OUEST && $destColonne === 0) {
-                    // Fin du retour, retirer la pièce du plateau
-                    $this->sortPiece($piece->getCouleur(), $destLigne);
+        } elseif ($couleur === PieceSquadro::BLANC) {
+            foreach ($this->plateau->getPlateau() as $ligne) {
+                if ($ligne[6]->getCouleur() === PieceSquadro::BLANC) {
+                    return false;
                 }
             }
-        
-            // Gérer les reculs des pièces adverses
-            $this->gererReculs($piece, $ligne, $colonne, $destLigne, $destColonne);
-        
-            return true;
         }
-        
-        public function reculePiece(int $ligne, int $colonne): bool {
-            $piece = $this->plateau->getPiece($ligne, $colonne);
-            if ($piece->getCouleur() === PieceSquadro::VIDE) {
-                return false;
-            }
+        return true;
+    }
 
-            if ($piece->direction === PieceSquadro::NORD) {
-                $this->plateau->setPiece($piece, 6, $colonne);
-            } elseif ($piece->direction === PieceSquadro::SUD) {
-                $this->plateau->setPiece($piece, 0, $colonne);
-            } elseif ($piece->direction === PieceSquadro::EST) {
-                $this->plateau->setPiece($piece, $ligne, 0);
-            } elseif ($piece->direction === PieceSquadro::OUEST) {
-                $this->plateau->setPiece($piece, $ligne, 6);
-            }
-
-            $piece.inverseDirection();
-
-            return true;
-        }
-
-        public function sortPiece(int $couleur, int $rang): void {
-            if ($couleur === PieceSquadro::NOIR) {
-                $this->plateau->setPiece(PieceSquadro::initVide(), 6, $rang);
-            } elseif ($couleur === PieceSquadro::BLANC) {
-                $this->plateau->setPiece(PieceSquadro::initVide(), $rang, 0);
-            }
-        }
-
-        public function remporteVictoire(int $couleur): bool {
-            if ($couleur === PieceSquadro::NOIR) {
-                foreach ($this->plateau->getPlateau()[6] as $piece) {
-                    if ($piece->getCouleur() === PieceSquadro::NOIR) {
-                        return false;
-                    }
-                }
-            } elseif ($couleur === PieceSquadro::BLANC) {
-                foreach ($this->plateau->getPlateau() as $ligne) {
-                    if ($ligne[6]->getCouleur() === PieceSquadro::BLANC) {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
+    /**
+     * Gère le recul des pièces adverses en cas de contact.
+     * 
+     * @param PieceSquadro $piece Pièce qui effectue le déplacement.
+     * @param int $ligne Ligne d'origine.
+     * @param int $colonne Colonne d'origine.
+     * @param int $destLigne Ligne de destination.
+     * @param int $destColonne Colonne de destination.
+     */
 
         // Méthode privée pour gérer les reculs des pièces adverses
         private function gererReculs(PieceSquadro $piece, int $ligne, int $colonne, int $destLigne, int $destColonne): void {
