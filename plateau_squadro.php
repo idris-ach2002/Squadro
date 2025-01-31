@@ -46,6 +46,8 @@ class PlateauSquadro {
      */
     private function initCasesVides(): void {
         for ($i = 1; $i <= 5; $i++) {
+            $this->plateau[0][$i] = PieceSquadro::initVide();
+            $this->plateau[$i][6] = PieceSquadro::initVide();
             for ($j = 1; $j <= 5; $j++) {
                 $this->plateau[$i][$j] = PieceSquadro::initVide();
             }
@@ -68,7 +70,6 @@ class PlateauSquadro {
     private function initCasesNoires(): void {
         for ($i = 1; $i <= 5; $i++) {
             $this->plateau[6][$i] = PieceSquadro::initNoirNord();
-            $this->plateau[0][$i] = PieceSquadro::initNoirSud();
         }
     }
 
@@ -77,7 +78,6 @@ class PlateauSquadro {
      */
     private function initCasesBlanches(): void {
         for ($i = 1; $i <= 5; $i++) {
-            $this->plateau[$i][6] = PieceSquadro::initBlancOuest();
             $this->plateau[$i][0] = PieceSquadro::initBlancEst();
         }
     }

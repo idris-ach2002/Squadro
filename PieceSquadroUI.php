@@ -223,16 +223,10 @@ class PieceSquadroUI {
                         $res .= PieceSquadroUI::genererCaseVide("btn$i-$j", "disabled"). "\n";
                         break;
                     case 0: // case blanche
-                        if($monPlateau->plate->getPiece($i, $j)->getDirection() == 1)
-                            $res .= PieceSquadroUI::genererCaseBlanche($i, $j, $monPlateau->plate->getPiece($i, $j)->getDirection(), "btn$i-$j", $disable). "\n";
-                        else
-                            $res .= PieceSquadroUI::genererCaseVide("btn$i-$j", "disabled"). "\n";
+                        $res .= PieceSquadroUI::genererCaseBlanche($i, $j, $monPlateau->plate->getPiece($i, $j)->getDirection(), "btn$i-$j", $disable). "\n";
                         break;
                     case 1: // case noir
-                        if($monPlateau->plate->getPiece($i, $j)->getDirection() == 0)
-                            $res .= PieceSquadroUI::genererCaseNoir($i, $j, $monPlateau->plate->getPiece($i, $j)->getDirection(), "btn$i-$j", $disable) . "\n";
-                        else
-                            $res .= PieceSquadroUI::genererCaseVide("btn$i-$j", "disabled"). "\n";
+                        $res .= PieceSquadroUI::genererCaseNoir($i, $j, $monPlateau->plate->getPiece($i, $j)->getDirection(), "btn$i-$j", $disable) . "\n";
                         break;
                 }
             }
