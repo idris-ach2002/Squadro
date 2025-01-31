@@ -263,8 +263,24 @@ class PlateauSquadro {
         $this->plateau[$ligne][$colonne] = $piece;
     }
 
-}
 
+
+    public function afficher_victoire (string $nomjoueur, string $fichier) : string {
+        $res = "<h1>Le joueur $nomjoueur a gagné !</h1>";
+        return $res + "<br/>" + PieceSquadroUI::plateauUI($fichier);
+    }
+
+
+    public function afficher_erreur (string $erreur, string $fichier) : string {
+        return "<h1>Erreur : $erreur</h1><br/>" + PieceSquadroUI::plateauUI($fichier);
+    }
+
+
+    public function afficher_confirmation (string $fichier) : string {
+        return "<input type='button' value='Confirmer'> <input type='button' value='Annuler'>" + PieceSquadroUI::plateauUI($fichier);
+    }
+
+}
 
     // Générer un plateau
     $plateau = new PlateauSquadro();
