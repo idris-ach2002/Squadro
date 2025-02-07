@@ -36,7 +36,9 @@
             $_SESSION['action'] = 'choixPiece';
             $_SESSION['position'] = [];
 
-            print(PlateauSquadro::afficher_plateau("traiteActionSquadro.php"));
+            header('Location: jeu.php');
+            header('HTTP/1.1 303 See Other');
+            exit();
 
             print_r($_SESSION);
         }
