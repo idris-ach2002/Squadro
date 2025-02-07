@@ -148,7 +148,7 @@ class PieceSquadroUI {
      * @param string $fich Action du formulaire.
      * @return string Code HTML du début du formulaire.
      */
-    private static function debForm(string $fich): string {
+    public static function debForm(string $fich): string {
         return "<form action='$fich' method='post' class='app'>";
     }
 
@@ -157,7 +157,7 @@ class PieceSquadroUI {
      *
      * @return string Code HTML de la fin du formulaire.
      */
-    private static function finForm(): string {
+    public static function finForm(): string {
         return "</form>";
     }
 

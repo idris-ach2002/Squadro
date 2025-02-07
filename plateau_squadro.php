@@ -294,8 +294,20 @@ class PlateauSquadro {
 
 
     public static function afficher_confirmation (string $fichier) : string {
-        return "<input type='button' value='Confirmer'> <input type='button' value='Annuler'>" . PieceSquadroUI::plateauUI($fichier);
+        $res = PieceSquadroUI::debForm($fichier). "\n";
+        $res .= "<input type='submit' value='Confirmer' name='bouton'> <input type='submit' value='Annuler' name = 'bouton'>" . "\n";
+        // $res .= PieceSquadroUI::plateauUI($fichier);
+        $res .= PieceSquadroUI::finForm();
+
+        print($fichier);
+
+        return $res;
     }
+
+
+    public static function afficher_plateau (string $fichier) : string {
+        return PieceSquadroUI::plateauUI($fichier);
+    } 
 
 }
 
