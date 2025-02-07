@@ -1,5 +1,8 @@
 <?php
+session_start();
+
 require_once 'PieceSquadroUI.php'; // Inclure la classe PieceSquadroUI
+
 
 // Définir la page d'action pour le formulaire
 $fich = "traiteActionSquadro.php"; // Tu peux modifier l'action en fonction de ta logique
@@ -15,6 +18,9 @@ echo "<!DOCTYPE html>
     <link rel='stylesheet' href='squadro.css' type='text/css'>
 </head>
 <body>";
+
+
+$_SESSION['action'] = 'choixPiece';
 
 // Afficher l'interface du plateau
 echo PieceSquadroUI::plateauUI($fich);
