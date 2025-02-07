@@ -2,7 +2,7 @@
 require_once 'PieceSquadroUI.php'; // Inclure la classe PieceSquadroUI
 
 // Définir la page d'action pour le formulaire
-$fich = "jeu.php"; // Tu peux modifier l'action en fonction de ta logique
+$fich = "traiteActionSquadro.php"; // Tu peux modifier l'action en fonction de ta logique
 
 // Afficher l'en-tête avec le lien vers le CSS
 echo "<!DOCTYPE html>
@@ -18,6 +18,7 @@ echo "<!DOCTYPE html>
 
 // Afficher l'interface du plateau
 echo PieceSquadroUI::plateauUI($fich);
+
 
 // Fermer les balises HTML
 echo "</body>

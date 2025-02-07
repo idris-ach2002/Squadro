@@ -51,8 +51,15 @@ class ActionSquadro {
         if (!$this->estJouablePiece($ligne, $colonne)) {
             return false;
         }
+
+
+        if ($ligne < 0 || $ligne >= 7 || $colonne < 0 || $colonne >= 7) {
+            return false;
+        }
         
         $piece = $this->plateau->getPiece($ligne, $colonne);
+
+
         $destination = $this->plateau->getCoordDestination($ligne, $colonne);
         [$destLigne, $destColonne] = $destination;
         
