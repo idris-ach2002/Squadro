@@ -52,4 +52,13 @@
             print("Confirmer");
         }
     }
+
+
+
+    if ($_SESSION['action'] == 'victoire' || $_SESSION['action'] == 'erreur')
+    {
+        session_destroy();
+        header('Location: jeu.php');
+        header('HTTP/1.1 303 See Other');
+    }
 ?>
