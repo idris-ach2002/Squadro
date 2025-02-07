@@ -282,7 +282,7 @@ class PlateauSquadro {
 
 
 
-    public function afficher_victoire (string $nomjoueur, string $fichier) : string {
+    public static function afficher_victoire (string $nomjoueur, string $fichier) : string {
         $res = "<h1>Le joueur $nomjoueur a gagné !</h1>";
         return $res + "<br/>" + PieceSquadroUI::plateauUI($fichier);
     }

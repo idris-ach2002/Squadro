@@ -32,7 +32,8 @@
 
     if ($_SESSION['action'] == 'confirmationPiece')
     {
-        if (isset($_POST['bouton']) && $_POST['bouton'] == 'Annuler') {
+        if (isset($_POST['bouton']) && $_POST['bouton'] == 'Annuler')
+        {
             $_SESSION['action'] = 'choixPiece';
             $_SESSION['position'] = [];
 
@@ -43,11 +44,27 @@
             print_r($_SESSION);
         }
 
-        if (isset($_POST['bouton']) && $_POST['bouton'] == 'Confirmer') {
-            // $_SESSION['action'] = 'choixPiece';
-            // $_SESSION['position'] = [];
-            // print(PlateauSquadro::afficher_choix_piece("traiteActionSquadro.php"));
-            // print_r($_SESSION);
+        if (isset($_POST['bouton']) && $_POST['bouton'] == 'Confirmer')
+        {
+            // Déplace la piece
+            getPiece($_SESSION['position'][0], $_SESSION['position'][1])->setPiece($_SESSION['position'][0], $_SESSION['position'][1], $_POST['x'], $_POST['y']);
+            
+            // On oublie la position de l'ancienne piece
+            $_SESSION['position'] = []; 
+
+            // On teste si la partie est terminée
+            // ??
+
+            if (true) {
+                $_SESSION['action'] = 'victoire';
+
+                // On affiche le message de victoire
+                print("??");
+            } else {
+                $_SESSION['action'] = 'erreur';
+
+                // A faire avec le mvc
+            }
 
             print("Confirmer");
         }
