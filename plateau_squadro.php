@@ -1,8 +1,5 @@
 <?php
     require_once 'piece_squadro.php';
-    require_once 'PieceSquadroUI.php';
-    require_once 'plateau_squadro.php';
-
 /**
  * Classe représentant le plateau de jeu Squadro.
  */
@@ -91,8 +88,13 @@ class PlateauSquadro {
      * @param int $index Indice de la ligne à retirer.
      */
     public function retireLigneJouable(int $index): void {
-        $this->lignesJouables = array_values(array_diff($this->lignesJouables, [$index]));
+        $key = array_search($index, $this->lignesJouables, true);
+        if ($key !== false) {
+            unset($this->lignesJouables[$key]);
+            $this->lignesJouables = array_values($this->lignesJouables); // Optionnel
+        }
     }
+    
 
     /**
      * Retire une colonne des colonnes jouables.
@@ -100,8 +102,14 @@ class PlateauSquadro {
      * @param int $index Indice de la colonne à retirer.
      */
     public function retireColonneJouable(int $index): void {
-        $this->colonnesJouables = array_values(array_diff($this->colonnesJouables, [$index]));
+        $key = array_search($index, $this->colonnesJouables, true);
+        if ($key !== false) {
+            unset($this->colonnesJouables[$key]);
+            $this->colonnesJouables = array_values($this->colonnesJouables); // Optionnel
+        }
     }
+
+
 
     /**
      * Calcule la destination d'une pièce.
@@ -112,55 +120,28 @@ class PlateauSquadro {
      * @throws \InvalidArgumentException Si la direction est invalide.
      */
     public function getCoordDestination(int $x, int $y): array {
-        if (!isset($plateau))
-            return array();
-
-
         $piece = $this->plateau[$x][$y];
-        if($piece == NULL) {
-            print_r($this->plateau);
-            print($x . ":$y");  
-
-            return array();
+        if ($piece === null) {
+            throw new \InvalidArgumentException("Aucune pièce trouvée en ($x, $y)");
         }
-        $vitesse = ($piece->getCouleur() === PieceSquadro::BLANC) ? 
-                   (($piece->getDirection() === PieceSquadro::EST) ? self::BLANC_V_ALLER[$x] : self::BLANC_V_RETOUR[$x]) : 
-                   (($piece->getDirection() === PieceSquadro::NORD) ? self::NOIR_V_RETOUR[$y] : self::NOIR_V_ALLER[$y]);
+
         $direction = $piece->getDirection();
-        $destX = $x;
-        $destY = $y;
+        $couleur = $piece->getCouleur();
+        $vitesse = 0;
 
-        switch ($direction) {
-            case PieceSquadro::NORD:
-                $destX = max(0, $x - $vitesse);
-                if ($destX === 0) {
-                    $piece->inverseDirection();
-                }
-                break;
-            case PieceSquadro::EST:
-                $destY = min(6, $y + $vitesse);
-                if ($destY === 6) {
-                    $piece->inverseDirection();
-                }
-                break;
-            case PieceSquadro::SUD:
-                $destX = min(6, $x + $vitesse);
-                if ($destX === 6) {
-                    $piece->inverseDirection();
-                }
-                break;
-            case PieceSquadro::OUEST:
-                $destY = max(0, $y - $vitesse);
-                if ($destY === 0) {
-                    $piece->inverseDirection();
-                }
-                break;
-            default:
-                throw new \InvalidArgumentException('Direction invalide');
+        if ($couleur === PieceSquadro::BLANC) {
+            $vitesse = ($direction === PieceSquadro::EST) ? self::BLANC_V_ALLER[$x] : self::BLANC_V_RETOUR[$x];
+            $newY = ($direction === PieceSquadro::EST) ? $y + $vitesse : $y - $vitesse;
+            return [$x, $newY];
+        } elseif ($couleur === PieceSquadro::NOIR) {
+            $vitesse = ($direction === PieceSquadro::NORD) ? self::NOIR_V_ALLER[$y] : self::NOIR_V_RETOUR[$y];
+            $newX = ($direction === PieceSquadro::NORD) ? $x - $vitesse : $x + $vitesse;
+            return [$newX, $y];
         }
 
-        return [$destX, $destY];
+        throw new \InvalidArgumentException("Direction inconnue");
     }
+
     /**
      * Retourne la pièce à la destination calculée pour une pièce donnée.
      *
@@ -169,10 +150,17 @@ class PlateauSquadro {
      * @return PieceSquadro La pièce située à la destination calculée.
      * @throws \InvalidArgumentException Si les coordonnées sont invalides.
      */
-    public function getDestination(int $x, int $y): PieceSquadro {
-        [$destX, $destY] = $this->getCoordDestination($x, $y);
-        return $this->plateau[$destX][$destY];
+    public function getDestination(int $x, int $y): ?PieceSquadro {
+        [$newX, $newY] = $this->getCoordDestination($x, $y);
+
+        if ($newX < 0 || $newX >= 7 || $newY < 0 || $newY >= 7) {
+            throw new \InvalidArgumentException("Coordonnées hors limites : ($newX, $newY)");
+        }
+
+        return $this->plateau[$newX][$newY] ?? null;
     }
+    
+    
 
     /**
      * Convertit l'état actuel du plateau en une chaîne JSON.
@@ -204,14 +192,10 @@ class PlateauSquadro {
     public static function fromJson(string $json): PlateauSquadro {
         $data = json_decode($json, true);
 
-        if (isset($data['invalid']) )
-            return null;
-
         if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
             throw new \InvalidArgumentException('Erreur lors du décodage JSON : ' . json_last_error_msg());
         }
 
-        
         $plateauSquadro = new self();
         $plateauSquadro->plateau = $data['plateau'];
         $plateauSquadro->lignesJouables = $data['lignesJouables'];
@@ -280,102 +264,79 @@ class PlateauSquadro {
         $this->plateau[$ligne][$colonne] = $piece;
     }
 
-
-
-    public static function afficher_victoire (string $nomjoueur, string $fichier) : string {
-        $res = "<h1>Le joueur $nomjoueur a gagné !</h1>";
-        return $res + "<br/>" + PieceSquadroUI::plateauUI($fichier);
-    }
-
-
-    public function afficher_erreur (string $erreur, string $fichier) : string {
-        return "<h1>Erreur : $erreur</h1><br/>" + PieceSquadroUI::plateauUI($fichier);
-    }
-
-
-    public static function afficher_confirmation (string $fichier) : string {
-        $res = PieceSquadroUI::debForm($fichier). "\n";
-        $res .= "<input type='submit' value='Confirmer' name='bouton'> <input type='submit' value='Annuler' name = 'bouton'>" . "\n";
-        // $res .= PieceSquadroUI::plateauUI($fichier);
-        $res .= PieceSquadroUI::finForm();
-
-        print($fichier);
-
-        return $res;
-    }
-
-
-    public static function afficher_plateau (string $fichier) : string {
-        return PieceSquadroUI::plateauUI($fichier);
-    } 
-
 }
 
-    // Générer un plateau
-    $plateau = new PlateauSquadro();
+    function testUnitairePlateau() {
+                // Générer un plateau
+        $plateau = new PlateauSquadro();
+        echo $plateau;
 
-    // // Test 1 : Vérification de l'initialisation du plateau
-    // echo "Test 1 : Initialisation du plateau<br/>";
-    // $plateauInit = $plateau->getPlateau();
-    // foreach ($plateauInit as $ligne) {
-    //     foreach ($ligne as $case) {
-    //         echo $case . " ";
-    //     }
-    //     echo "<br/>";
-    // }
+        // Test 1 : Vérification de l'initialisation du plateau
+        echo "Test 1 : Initialisation du plateau<br/>";
+        $plateauInit = $plateau->getPlateau();
+        foreach ($plateauInit as $ligne) {
+            foreach ($ligne as $case) {
+                echo $case . " ";
+            }
+            echo "<br/>";
+        }
 
-    // // Test 2 : Vérification des lignes et colonnes jouables
-    // echo "<br/>Test 2 : Lignes et colonnes jouables<br/>";
-    // print_r($plateau->getLignesJouables());
-    // print_r($plateau->getColonnesJouables());
+        // Test 2 : Vérification des lignes et colonnes jouables
+        echo "<br/>Test 2 : Lignes et colonnes jouables<br/>";
+        print_r($plateau->getLignesJouables());
+        print_r($plateau->getColonnesJouables());
 
-    // // Test 3 : Retrait de lignes et colonnes jouables
-    // echo "<br/>Test 3 : Retrait de lignes et colonnes jouables  ligne 1 colonne 5<br/>";
-    // $plateau->retireLigneJouable(1);
-    // $plateau->retireColonneJouable(5);
-    // print_r($plateau->getLignesJouables());
-    // print_r($plateau->getColonnesJouables());
+        // Test 3 : Retrait de lignes et colonnes jouables
+        echo "<br/>Test 3 : Retrait de lignes et colonnes jouables  ligne 1 colonne 5<br/>";
+        $plateau->retireLigneJouable(1);
+        $plateau->retireColonneJouable(5);
+        print_r($plateau->getLignesJouables());
+        print_r($plateau->getColonnesJouables());
 
-    // // Test 4 : Vérification de la destination
-    // echo "<br/>Test 4 : Destination d'une pièce<br/>";
-    // $destCoords = $plateau->getCoordDestination(6, 1); // Coordonnées initiales
-    // echo "Destination de (6, 1) : (" . $destCoords[0] . ", " . $destCoords[1] . ")\n";
+        // Test 4 : Vérification de la destination
+        echo "<br/>Test 4 : Destination d'une pièce<br/>";
+        $destCoords = $plateau->getCoordDestination(6, 1); // Coordonnées initiales
+        echo "Destination de (6, 1) : (" . $destCoords[0] . ", " . $destCoords[1] . ")\n";
 
-    // // Test 5 : Modifier une pièce et vérifier la modification
-    // echo "<br/>Test 5 : Modification d'une pièce<br/>";
-    // $newPiece = PieceSquadro::initBlancEst();
-    // $plateau->setPiece($newPiece, 1, 1);
-    // echo "<br/>Nouvelle pièce en (1, 1) : " . $plateau->getPiece(1, 1) . "<br/>";
+        // Test 5 : Modifier une pièce et vérifier la modification
+        echo "<br/>Test 5 : Modification d'une pièce<br/>";
+        $newPiece = PieceSquadro::initBlancEst();
+        $plateau->setPiece($newPiece, 1, 1);
+        echo "<br/>Nouvelle pièce en (1, 1) : " . $plateau->getPiece(1, 1) . "<br/>";
 
-    // // Test 6 : Conversion en JSON
-    // echo "<br/>Test 6 : Conversion en JSON<br/>";
-    // $json = $plateau->toJson();
-    // echo $json . "<br/>";
+        // Test 6 : Conversion en JSON
+        echo "<br/>Test 6 : Conversion en JSON<br/>";
+        $json = $plateau->toJson();
+        echo $json . "<br/>";
 
-    // // Test 7 : Récupération depuis JSON
-    // echo "<br/>Test 7 : Récupération depuis JSON<br/>";
-    // $newPlateau = PlateauSquadro::fromJson($json);
-    // print_r($newPlateau->getLignesJouables());
-    // print_r($newPlateau->getColonnesJouables());
+        // Test 7 : Récupération depuis JSON
+        echo "<br/>Test 7 : Récupération depuis JSON<br/>";
+        $newPlateau = PlateauSquadro::fromJson($json);
+        print_r($newPlateau->getLignesJouables());
+        print_r($newPlateau->getColonnesJouables());
 
-    // // Test 8 : Cas limite - pièce en dehors des limites
-    // echo "<br/>Test 8 : Cas limite (coordonnées hors limite)<br/>";
-    // try {
-    //     $plateau->getCoordDestination(7, 1); // Coordonnées hors limite
-    // } catch (\InvalidArgumentException $e) {
-    //     echo "Erreur détectée : " . $e->getMessage() . "<br/>";
-    // }
+        // Test 8 : Cas limite - pièce en dehors des limites
+        echo "<br/>Test 8 : Cas limite (coordonnées hors limite)<br/>";
+        try {
+            $plateau->getCoordDestination(7, 1); // Coordonnées hors limite
+        } catch (\InvalidArgumentException $e) {
+            echo "Erreur détectée : " . $e->getMessage() . "<br/>";
+        }
 
-    // // Test 9 : Cas limite - JSON mal formé
-    // echo "<br/>Test 9 : Cas limite (JSON mal formé)<br/>";
-    // // try {
-    // //     PlateauSquadro::fromJson('{"invalid": "data"}');
-    // // } catch (\InvalidArgumentException $e) {
-    // //     echo "Erreur détectée : " . $e->getMessage() . "<br/>";
-    // // }
+        // Test 9 : Cas limite - JSON mal formé
+        echo "<br/>Test 9 : Cas limite (JSON mal formé)<br/>";
+        try {
+            PlateauSquadro::fromJson('{"invalid": "data"}');
+        } catch (\InvalidArgumentException $e) {
+            echo "Erreur détectée : " . $e->getMessage() . "<br/>";
+        }
 
-    // // Test 10 : Vérification de la méthode __toString
-    // echo "<br/>Test 10 : Méthode __toString<br/>";
-    // echo $plateau . "<br/>";
+        // Test 10 : Vérification de la méthode __toString
+        echo "<br/>Test 10 : Méthode __toString<br/>";
+        echo $plateau . "<br/>";
 
+    }
+
+    //testUnitairePlateau();
 ?>
+
