@@ -1,81 +1,80 @@
 <?php
-    session_start();
+require_once 'action_squadro.php';
 
 
-    require_once 'plateau_squadro.php';
+session_start();
 
 
-    function actionChoisirPiece () : void
-    {
-        $_SESSION['action'] = 'confirmationPiece';
 
-        foreach ($_POST as $key => $value) {
-            if (strpos($key, 'white') === 0 || strpos($key, 'black') === 0) {
-                list(, $x, $y) = explode('-', $key);
-                $_SESSION['position'] = [$x, $y];
-                break;
+function traiterChoix(string $couleur)
+{
+    //stocker la position de la pièce dans un tableau [abcisse, ordonnée] (btn$x-$y) -> ["", "$x-$y"] -> [$x,$y]
+    $_SESSION["position"] = explode("-", explode("btn", $_REQUEST[$couleur])[1]);
+    //stocker le joueur courant
+    $_SESSION["joueur"] = $couleur;
+    $_SESSION["etat"] = "ConfirmationPiece";
+}
+
+function traiterAnnulation()
+{
+    $_SESSION["position"] = "";
+    $_SESSION["etat"] = "choixPiece";
+}
+
+function traiterErreur()
+{
+    session_unset();
+    $_SESSION["etat"] = "choixPiece";
+}
+
+
+
+function traiterConfiramtion(string $couleur)
+{
+    echo "<h1>X" . $_SESSION["position"][0] . ", Y" . $_SESSION["position"][1] . "</h1>";
+    echo $_SESSION["plateau"]->__toString();
+    $couleurInt = $couleur === 'blanc' ? PieceSquadro::BLANC : PieceSquadro::NOIR;
+
+    if (isset($_SESSION["plateau"])) {
+        if (isset($_SESSION["position"])) {
+            $bouger = new ActionSquadro($_SESSION["plateau"]);
+            $bouger->jouePiece($_SESSION["position"][0], $_SESSION["position"][1]);
+            unset($_SESSION["position"]);
+            if ($bouger->remporteVictoire($couleurInt))
+                $_SESSION["etat"] = "Victoire";
+            else {
+                $_SESSION["joueur"] = $couleur === 'blanc' ? 'noir' : 'blanc';
+                $_SESSION["etat"] = "choixPiece";
             }
+        } else {
+            echo "position de la pièce à faire bouger non sauvgardé impossible de faire les déplacements<br/>";
+            exit(1);
         }
-
-        print(PlateauSquadro::afficher_confirmation("traiteActionSquadro.php"));
+    } else {
+        echo "plateau non sauvgardé impossible de faire les déplacements<br/>";
+        exit(1);
     }
-
-    print("SESSION<br>\n\n");
-    print_r($_SESSION);
-    print("POST<br>\n\n");
-    print_r($_POST);
-
-    if ($_SESSION['action'] == 'choixPiece')
-        actionChoisirPiece();
+}
 
 
 
-    if ($_SESSION['action'] == 'confirmationPiece')
-    {
-        if (isset($_POST['bouton']) && $_POST['bouton'] == 'Annuler')
-        {
-            $_SESSION['action'] = 'choixPiece';
-            $_SESSION['position'] = [];
 
-            header('Location: jeu.php');
-            header('HTTP/1.1 303 See Other');
-            exit();
 
-            print_r($_SESSION);
-        }
 
-        if (isset($_POST['bouton']) && $_POST['bouton'] == 'Confirmer')
-        {
-            // Déplace la piece
-            getPiece($_SESSION['position'][0], $_SESSION['position'][1])->setPiece($_SESSION['position'][0], $_SESSION['position'][1], $_POST['x'], $_POST['y']);
-            
-            // On oublie la position de l'ancienne piece
-            $_SESSION['position'] = []; 
+if (isset($_REQUEST["blanc"])) {
+    traiterChoix("blanc");
+    header('Location: index.php');
+} else if (isset($_REQUEST["noir"])) {
+    traiterChoix("noir");
+    header('Location: index.php');
+}
 
-            // On teste si la partie est terminée
-            // ??
 
-            if (true) {
-                $_SESSION['action'] = 'victoire';
-
-                // On affiche le message de victoire
-                print("??");
-            } else {
-                $_SESSION['action'] = 'erreur';
-
-                // A faire avec le mvc
-            }
-
-            print("Confirmer");
-        }
+if(isset($_REQUEST["choix"])) {
+    switch ($_REQUEST["choix"]) {
+        case "PRESEED": traiterConfiramtion($_SESSION["joueur"]); break;
+        case "ABORT": traiterAnnulation(); break;
     }
+    header('Location: index.php');
+}
 
-
-
-    if ($_SESSION['action'] == 'victoire' || $_SESSION['action'] == 'erreur')
-    {
-        session_destroy();
-        header('Location: jeu.php');
-        header('HTTP/1.1 303 See Other');
-    }
-?>
