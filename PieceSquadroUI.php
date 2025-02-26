@@ -67,7 +67,7 @@ class PieceSquadroUI
     private static function genererCaseBlanche(int $x, int $y, int $direction, string $id, string $disable): string
     {
         $position = $direction == 1 ? "BE" : "BW";
-        $style = $direction == 1 ? "border-right: solid blue 5px;" : " border-left: solid blue 5px;";
+        $style = $direction == 1 ? "border-right: solid #c9c6ac 10px;" : " border-left: solid #c9c6ac 10px;";
         return "<button type='submit' style='$style' class='white' name='blanc' value='$id' id='$id' $disable>$position</button>";
     }
 
@@ -85,7 +85,7 @@ class PieceSquadroUI
     private static function genererCaseNoir(int $x, int $y, int $direction, string $id, string $disable): string
     {
         $position = $direction == 0 ? "NN" : "NS";
-        $style = $direction == 0 ? " border-top: solid red 5px;" : "border-bottom: solid red 5px;";
+        $style = $direction == 0 ? " border-top: solid black 10px;" : "border-bottom: solid black 10px;";
         return "<button type='submit' class='black' style='$style' name='noir' value='$id' id='$id' $disable>$position</button>";
     }
     /**
@@ -139,7 +139,13 @@ class PieceSquadroUI
     {
         return '
                 body {
-                    background-color: #ccc;
+                    background-image: url("Logo/valhalla.jpg");
+                    background-position: cover;
+                    background-repeat: repeat;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
                 }
 
                 .confirmation {
@@ -235,7 +241,10 @@ class PieceSquadroUI
                     distort 0.7s infinite alternate ease-in-out;
             box-shadow: 0 0 40px #ff4500, 0 0 80px #ff0000, 0 0 120px rgba(255, 69, 0, 1);
             transition: transform 0.15s ease-in-out, filter 0.15s;
-            background: linear-gradient(45deg, #ff4500, #ff0000, #ff4500);
+            background-image: url("Logo/dragon1.jpg");
+            background-size: 100px 100px; /* Définit une largeur et hauteur spécifiques */
+            background-position: center;
+            background-repeat: no-repeat;
             border: 10px dashed rgba(255, 255, 255, 0.89);
             color: white;
             font-weight: bold;
@@ -331,13 +340,10 @@ class PieceSquadroUI
         return '
               #btn0-0,#btn6-0,#btn0-6,#btn6-6 {
                 cursor: not-allowed;
-                font-size: 22px;
-                font-weight: bold;
-                color: white;
-                text-align: center;
-                line-height: 200px;
-                background: #222222;
-                border: 40px dashed rgba(255, 255, 255, 0.89);
+                background-image: url("Logo/samurai3.jpeg");
+                background-size: 100px 100px; /* Définit une largeur et hauteur spécifiques */
+                background-position: center;
+                background-repeat: no-repeat;
                 border-radius: 10px;
                 overflow: hidden;
                 box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
@@ -347,14 +353,15 @@ class PieceSquadroUI
 
             @keyframes cosmicWave {
                 0% { transform: scale(1) rotate(0deg); }
-                25% { transform: scale(1.2) rotate(10deg); }
-                50% { transform: scale(1) rotate(-10deg); }
-                75% { transform: scale(1.1) rotate(5deg); }
+                25% { transform: scale(0.8) rotate(10deg); }
+                50% { transform: scale(0.85) rotate(-10deg); }
+                75% { transform: scale(0.95) rotate(5deg); }
                 100% { transform: scale(1) rotate(0deg); }
             }
 
             #btn0-0:hover,#btn6-0:hover,#btn0-6:hover,#btn6-6:hover {
-            border: 40px dashed rgb(0, 0, 0);
+                background-image: none;
+                border: 15px ridge rgb(249, 193, 140);
                 animation: cosmicWave 1.5s infinite;
                 box-shadow: 0 0 100px rgba(255, 255, 255, 0.8), 0 0 150px rgba(0, 0, 0, 0.8);
             }
@@ -392,7 +399,6 @@ class PieceSquadroUI
 
             #btn0-0:hover,#btn6-0:hover,#btn0-6:hover,#btn6-6:hover {
                 animation: nebula 0.6s infinite ease-in-out;
-                transform: scale(1.1);
                 box-shadow: 0 0 200px rgb(0, 0, 0), 0 0 200px rgb(255, 255, 255);
             }
 
@@ -611,16 +617,23 @@ class PieceSquadroUI
                     color: white;
                     transform: scale(0.98);
                     border-radius: 15px;
-                    border: 20px dashed rgba(255, 255, 255, 0.89);
+                    border: 20px ridge rgba(255, 255, 255, 0.89);
                 }
+                    
 
                 button.white {
-                    background-color: #ffffff;
-                    color: black;
+                    background-image: url("Logo/femmeGrec.png");
+                    background-size: 100px 100px; /* Définit une largeur et hauteur spécifiques */
+                    background-position: center;
+                    background-repeat: no-repeat;
+                    color: white;
                 }
 
                 button.black {
-                    background-color: #000000;
+                    background-image: url("Logo/guerrier.jpg");
+                    background-size: 100px 100px; /* Définit une largeur et hauteur spécifiques */
+                    background-position: center;
+                    background-repeat: no-repeat;
                     color: white;
                 }
 
