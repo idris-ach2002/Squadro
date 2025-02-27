@@ -4,7 +4,7 @@
 namespace Squadro;
 use Squadro\PDOSquadro;
 
-require_once 'PDOSquadro.php';
+require_once '../Modele/PDOSquadro.php';
 session_start();
 function getPageLogin(): string {
 $form = '<!DOCTYPE html>
@@ -26,15 +26,15 @@ return $form;
 
 if (isset($_REQUEST['playerName'])) {
     // connexion à la base de données
-    require_once 'env/db.php';
-    PDOSquadro::initPDO($_ENV['sgbd'],$_ENV['host'],$_ENV['database'],$_ENV['user'],$_ENV['password']);
-    $player = PDOSquadro::selectPlayerByName($_REQUEST['playerName']);
-    if (is_null($player))
-        $player = PDOSquadro::createPlayer($_REQUEST['playerName']);
-    $_SESSION['player'] = $player;
+    // require_once 'env/db.php';
+    // PDOSquadro::initPDO($_ENV['sgbd'],$_ENV['host'],$_ENV['database'],$_ENV['user'],$_ENV['password']);
+    // $player = PDOSquadro::selectPlayerByName($_REQUEST['playerName']);
+    // if (is_null($player))
+    //     $player = PDOSquadro::createPlayer($_REQUEST['playerName']);
+    $_SESSION['joueur'] = $player;
+    header('Location: choixAction.php');
     header('HTTP/1.1 303 See Other');
-    header('Location: index.php');
 }
 else {
-  echo getPageLogin();
+echo getPageLogin();
 }

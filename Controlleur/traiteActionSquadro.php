@@ -5,6 +5,18 @@ require_once '../Modele/action_squadro.php';
 session_start();
 
 
+function login() {
+    if (!isset($_SESSION["login"]))
+    {
+        header('Location: ../Vue/login.php');
+        header('HTTP/1.1 303 See Other');
+    }
+    else
+    {
+        print("Données");
+    }
+}
+
 
 function traiterChoix(string $couleur)
 {
@@ -62,14 +74,15 @@ function traiterConfiramtion(string $couleur)
 
 
 
+login();
 
 
 if (isset($_REQUEST["blanc"])) {
     traiterChoix("blanc");
-    header('Location: index.php');
+    header('Location: index_squadro.php');
 } else if (isset($_REQUEST["noir"])) {
     traiterChoix("noir");
-    header('Location: index.php');
+    header('Location: index_squadro.php');
 }
 
 
@@ -78,13 +91,13 @@ if(isset($_REQUEST["choix"])) {
         case "PRESEED": traiterConfiramtion($_SESSION["joueur"]); break;
         case "ABORT": traiterAnnulation(); break;
     }
-    header('Location: index.php');
+    header('Location: index_squadro.php');
 }
 
 
 
 if(isset($_REQUEST["rejouer"])) {
     rejouer();
-    header('Location: index.php');
+    header('Location: index_squadro.php');
 }
 
