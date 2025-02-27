@@ -1,5 +1,5 @@
 <?php
-require_once 'action_squadro.php';
+require_once '../Modele/action_squadro.php';
 
 
 session_start();
