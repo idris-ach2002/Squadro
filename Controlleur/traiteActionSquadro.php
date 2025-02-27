@@ -27,6 +27,9 @@ function traiterErreur()
     $_SESSION["etat"] = "choixPiece";
 }
 
+function rejouer() : void {
+    $_SESSION = []; //il suffit juste d'oublier la session tout est fais dans index
+}
 
 
 function traiterConfiramtion(string $couleur)
@@ -75,6 +78,13 @@ if(isset($_REQUEST["choix"])) {
         case "PRESEED": traiterConfiramtion($_SESSION["joueur"]); break;
         case "ABORT": traiterAnnulation(); break;
     }
+    header('Location: index.php');
+}
+
+
+
+if(isset($_REQUEST["rejouer"])) {
+    rejouer();
     header('Location: index.php');
 }
 

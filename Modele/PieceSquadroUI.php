@@ -436,6 +436,7 @@ class PieceSquadroUI
                             justify-content: center;
                             align-items: center;
                             height: 100vh;
+                            width: 100vw;
                             background-color: #000;
                             overflow: hidden;
                             position: relative;
@@ -527,6 +528,66 @@ class PieceSquadroUI
                                 opacity: 0;
                                 transform: scale(1.5);
                             }
+                        }
+                            #rejouer {
+                            width: 300px;
+                            height: 100px;
+                            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+                            color: white;
+                            font-size: 24px;
+                            font-weight: bold;
+                            border: none;
+                            border-radius: 15px;
+                            cursor: pointer;
+                            position: absolute;
+                            bottom: 20px;
+                            left: 50%;
+                            transform: translateX(-50%);
+                            box-shadow: 0 0 15px rgba(255, 71, 45, 0.7);
+                            transition: all 0.3s ease-in-out;
+                            overflow: hidden;
+                        }
+
+                        #rejouer::before {
+                            content: '';
+                            position: absolute;
+                            top: -100%;
+                            left: -100%;
+                            width: 300%;
+                            height: 300%;
+                            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 10%, transparent 80%);
+                            transition: all 0.5s ease-in-out;
+                        }
+
+                        #rejouer:hover::before {
+                            top: 0;
+                            left: 0;
+                        }
+
+                        #rejouer:hover {
+                            transform: translateX(-50%) scale(1.1);
+                            box-shadow: 0 0 25px rgba(255, 71, 45, 1);
+                        }
+
+                        @keyframes pulse {
+                            0% {
+                                transform: translateX(-50%) scale(1);
+                            }
+                            50% {
+                                transform: translateX(-50%) scale(1.05);
+                            }
+                            100% {
+                                transform: translateX(-50%) scale(1);
+                            }
+                        }
+
+                        #rejouer:active {
+                            transform: translateX(-50%) scale(0.95);
+                            box-shadow: 0 0 10px rgba(255, 71, 45, 0.7);
+                        }
+
+                        #rejouer {
+                            animation: pulse 2s infinite;
                         }
 
         ";
@@ -824,9 +885,10 @@ class PieceSquadroUI
      * @param string $joueur Nom du joueur gagnant.
      * @return string Code HTML du message de victoire.
      */
-    public static function afficherVictoire(string $nomjoueur): string
+    public static function afficherVictoire(string $nomjoueur, string $fich): string
     {
-        return     "<div class='victoire'>
+        return      self::debForm($fich) . 
+                    "<div class='victoire'>
                         <h1 class='winner'>Le joueur $nomjoueur a gagné !</h1>
                         <div class='fireworks'>
                             <div class='firework' style='--i:1;'></div>
@@ -835,7 +897,9 @@ class PieceSquadroUI
                             <div class='firework' style='--i:4;'></div>
                             <div class='firework' style='--i:5;'></div>
                         </div>
-                    </div>";
+                        <button type='submit' value='PLAY AGAIN' name='rejouer' id='rejouer'>PLAY AGAIN</button>
+                    </div>" .
+                    self::finForm();
     }
 
 

@@ -51,7 +51,7 @@ if(!isset($_SESSION["etat"])) {
             break;
         }
 
-        case "Victoire": echo PieceSquadroUI::afficherVictoire($_SESSION["joueur"]); break;
+        case "Victoire": echo PieceSquadroUI::afficherVictoire($_SESSION["joueur"], "traiteActionSquadro.php"); break;
     }
 }
 
@@ -61,3 +61,4 @@ if(!isset($_SESSION["etat"])) {
 echo "</body>
 </html>";
 ?>
+
