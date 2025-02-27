@@ -1,6 +1,6 @@
 <?php
-require_once 'PieceSquadroUI.php'; 
-require_once 'plateau_squadro.php'; 
+require_once '../Modele/PieceSquadroUI.php'; 
+require_once '../Modele/plateau_squadro.php'; 
 
 session_start();
 
