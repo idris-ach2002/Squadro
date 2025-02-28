@@ -1,19 +1,16 @@
 <?php
 // Charger l'autoloader de Composer pour utiliser Dotenv
-require_once __DIR__ . '/../vendor/autoload.php'; // Si le dossier vendor est à la racine
+require_once __DIR__ . '/../.env.php'; // Charger le fichier .env.php
 
-// Charger le fichier .env avec php dotenv
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../'); // Charger .env situé à la racine
-$dotenv->load();
 
 // Vérification si les variables d'environnement sont bien définies
-if (empty($_ENV['sgbd']) || empty($_ENV['host']) || empty($_ENV['database']) || empty($_ENV['user']) || empty($_ENV['password'])) {
+if (empty(getenv('sgbd')) || empty(getenv('host')) || empty(getenv('database')) || empty(getenv('user')) || empty(getenv('password'))) {
     throw new Exception("Les variables d'environnement de la base de données ne sont pas définies correctement.");
 }
 
 // Pour déboguer et voir si les variables sont bien chargées
-print("sgbd: " . $_ENV['sgbd'] . "\n");
-print("host: " . $_ENV['host'] . "\n");
-print("database: " . $_ENV['database'] . "\n");
-print("user: " . $_ENV['user'] . "\n");
-print("password: " . $_ENV['password'] . "\n");
+print("sgbd: " . getenv('sgbd') . "\n");
+print("host: " . getenv('host') . "\n");
+print("database: " . getenv('database') . "\n");
+print("user: " . getenv('user') . "\n");
+print("password: " . getenv('password') . "\n");

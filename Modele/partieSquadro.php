@@ -48,9 +48,26 @@ class PartieSquadro {
         $this->partieId = $id;
     }
 
+
+    public function getGameStatus(): string {
+        return $this->gameStatus;
+    }
+
+    public function setPartieStatus(string $status): void {
+        $this->gameStatus = $status;
+    }
+
     // Récupérer tous les joueurs
     public function getJoueurs(): array {
         return $this->joueurs;
+    }
+
+    public function setPlateau (PlateauSquadro $plateau): void {
+        $this->plateau = $plateau;
+    }
+
+    public function getPlateau(): PlateauSquadro {
+        return $this->plateau;
     }
 
     // Convertir l'objet en JSON

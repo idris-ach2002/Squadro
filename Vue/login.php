@@ -1,9 +1,6 @@
 <?php
 
 // à changer avec la mienne il y a La classe ConceptionIntrface et tout dans connect.php
-namespace Squadro;
-use Squadro\PDOSquadro;
-
 require_once '../skel/PDOSquadro.skel.php';
 session_start();
 function getPageLogin(): string {
@@ -27,14 +24,22 @@ return $form;
 if (isset($_REQUEST['playerName'])) {
     // connexion à la base de données
     require_once '../env/db.php';
-    PDOSquadro::initPDO($_ENV['sgbd'],$_ENV['host'],$_ENV['database'],$_ENV['user'],$_ENV['password']);
-    $player = PDOSquadro::selectPlayerByName($_REQUEST['playerName']);
-    if (is_null($player))
+    PDOSquadro::initPDO(getenv('sgbd'),getenv('host'),getenv('database'),getenv('user'),getenv('password'));
+    $player = PDOSquadro::getPlayerByName($_REQUEST['playerName']);
+    
+    error_log('-------------' . var_export($player, true));
+    
+    if (is_null($player)){
         $player = PDOSquadro::createPlayer($_REQUEST['playerName']);
-    $_SESSION['joueur'] = $player;
+        error_log('------------ is null');
+    }
+
+    $_SESSION['joueur'] = $player->toJson();
+    //$_SESSION['etat'] = 'home';
+
     header('Location: choixAction.php');
     header('HTTP/1.1 303 See Other');
 }
 else {
-echo getPageLogin();
+    echo getPageLogin();
 }

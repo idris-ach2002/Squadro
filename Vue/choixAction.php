@@ -72,20 +72,19 @@ return $form;
 
 echo getPage();
 
-
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["action"])) {
     switch ($_POST["action"]) {
         case "nouvelle_partie":
-            header("Location: ../Controlleur/index_squadro.php");
+            header("Location: attente_joueur.php");
             header('HTTP/1.1 303 See Other');
             exit();
         case "parties_en_cours":
             $_SESSION["etat"] = "consultePartieEnCours";
-            //header("Location: parties_en_cours.php");
-            //header('HTTP/1.1 303 See Other');
+            header("Location: partiesEnCours.php");
+            header('HTTP/1.1 303 See Other');
             exit();
         case "parties_attente":
-            header("Location: parties_attente.php");
+            header("Location: partieAttente.php");
             header('HTTP/1.1 303 See Other');
             exit();
         case "parties_terminees":
