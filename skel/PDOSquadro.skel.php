@@ -30,7 +30,7 @@ class PDOSquadro
         self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         // Initialiser les tables
-        self::initTable('squadro.sql');
+        self::initTable('../SQL/squadro.sql');
 
         self::initPrepare();
     }
