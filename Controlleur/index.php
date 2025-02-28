@@ -1,6 +1,6 @@
 <?php
-require_once '../Modele/PieceSquadroUI.php'; 
-require_once '../Modele/plateau_squadro.php'; 
+require_once 'PieceSquadroUI.php'; 
+require_once 'plateau_squadro.php'; 
 
 session_start();
 
@@ -48,6 +48,12 @@ if(!isset($_SESSION["etat"])) {
             echo PieceSquadroUI::debForm("traiteActionSquadro.php") . 
             PieceSquadroUI::plateauUI($_SESSION["plateau"], $noir, $blanc).
             PieceSquadroUI::finForm();
+            break;
+        }
+
+        case "erreur": {
+            $id = ' ['. $_SESSION["position"][0] . ' , '. $_SESSION["position"][1] . ']';
+            echo PieceSquadroUI::afficher_erreur("traiteActionSquadro.php", $id, $_SESSION["plateau"]); 
             break;
         }
 

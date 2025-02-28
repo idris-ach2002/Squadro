@@ -592,63 +592,194 @@ class PieceSquadroUI
 
         ";
     }
-
     private static function styleBoiteConfirmation(): string
     {
         return "
-                      /* Styles pour la boîte de confirmation */
-                .confirmation {
-                    position: fixed;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    background-color: #fff;
-                    padding: 20px;
-                    border-radius: 10px;
-                    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-                    text-align: center;
+            /* Importation de la police viking */
+            @import url('https://fonts.googleapis.com/css2?family=Pirata+One&display=swap');
+    
+            /* Styles pour la boîte de confirmation */
+            .confirmation {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 400px;
+                padding: 30px;
+                text-align: center;
+                background: url('https://www.example.com/wood-texture.jpg') center/cover no-repeat;
+                color:rgb(0, 0, 0);
+                font-family: 'Pirata One', cursive; /* Police viking */
+                border: 6px solid #d4af37;
+                border-image: url('https://www.example.com/metal-border.png') 30 stretch;
+                border-radius: 20px;
+                box-shadow: 0 0 30px rgba(255, 215, 0, 0.7);
+                opacity: 0;
+                animation: fadeInScale 0.8s forwards, glowEffect 1.5s infinite alternate;
+            }
+    
+            /* Animation d'apparition avec effet runique */
+            @keyframes fadeInScale {
+                0% {
                     opacity: 0;
-                    animation: fadeInScale 0.5s forwards;
+                    transform: translate(-50%, -50%) scale(0.7);
+                    filter: blur(10px);
                 }
-
-                /* Animation d apparition */
-                @keyframes fadeInScale {
-                    0% {
-                        opacity: 0;
-                        transform: translate(-50%, -50%) scale(0.8);
-                    }
-                    100% {
-                        opacity: 1;
-                        transform: translate(-50%, -50%) scale(1);
-                    }
+                100% {
+                    opacity: 1;
+                    transform: translate(-50%, -50%) scale(1);
+                    filter: blur(0);
                 }
-
-                /* Styles pour les boutons */
-                .btn {
-                    background-color: #4CAF50;
-                    border: none;
-                    color: white;
-                    padding: 10px 24px;
-                    margin: 10px;
-                    border-radius: 5px;
-                    cursor: pointer;
-                    transition: background-color 0.3s, transform 0.3s;
+            }
+    
+            /* Effet de lueur runique */
+            @keyframes glowEffect {
+                0% {
+                    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
                 }
-
-                /* Effet au survol des boutons */
-                .btn:hover {
-                    background-color: #45a049;
-                    transform: translateY(-2px);
+                100% {
+                    box-shadow: 0 0 40px rgba(255, 215, 0, 1);
                 }
-
-                /* Effet lors du clic sur les boutons */
-                .btn:active {
-                    transform: translateY(2px);
+            }
+    
+            /* Effet d'impulsion des boutons */
+            @keyframes pulse {
+                0% {
+                    transform: scale(1);
+                    box-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
                 }
-
-            ";
+                100% {
+                    transform: scale(1.1);
+                    box-shadow: 0 0 20px rgba(255, 140, 0, 1);
+                }
+            }
+    
+            /* Styles des boutons (effet forge brûlante) */
+            .btn {
+                background: linear-gradient(45deg, #8b5e3c, #d4af37);
+                border: 3px solid #d4af37;
+                color: black;
+                padding: 12px 30px;
+                margin: 10px;
+                border-radius: 50px;
+                cursor: pointer;
+                font-family: 'Pirata One', cursive;
+                font-size: 20px;
+                text-transform: uppercase;
+                box-shadow: 0 5px 15px rgba(212, 175, 55, 0.5);
+                transition: all 0.3s ease-in-out;
+                animation: pulse 1.5s infinite alternate;
+            }
+    
+            /* Effet au survol des boutons */
+            .btn:hover {
+                background: linear-gradient(45deg, #d4af37, #ff8c00);
+                transform: scale(1.1);
+                box-shadow: 0 10px 25px rgba(255, 140, 0, 0.8);
+            }
+    
+            /* Effet lors du clic sur les boutons */
+            .btn:active {
+                transform: scale(0.9);
+            }
+        ";
     }
+    
+    
 
+    private static function styleBoiteErreur(): string
+    {
+        return "
+            @import url('https://fonts.googleapis.com/css2?family=Pirata+One&display=swap');
+    
+            /* Styles pour la boîte d'erreur */
+            .erreur {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 400px;
+                padding: 30px;
+                text-align: center;
+                background: url('https://www.example.com/stone-texture.jpg') center/cover no-repeat;
+                color: #ff4d4d;
+                font-family: 'Pirata One', cursive;
+                border: 6px solid #ff0000;
+                border-image: url('https://www.example.com/fire-border.png') 30 stretch;
+                border-radius: 20px;
+                box-shadow: 0 0 30px rgba(255, 0, 0, 0.7);
+                animation: fadeInExplosion 0.8s ease-out, glowInfernal 1.5s infinite alternate;
+            }
+    
+            /* Apparition explosive */
+            @keyframes fadeInExplosion {
+                0% {
+                    transform: translate(-50%, -50%) scale(0.7) rotate(-10deg);
+                    filter: blur(10px);
+                }
+                80% {
+                    transform: translate(-50%, -50%) scale(1.1) rotate(5deg);
+                    filter: blur(2px);
+                }
+                100% {
+                    transform: translate(-50%, -50%) scale(1) rotate(0);
+                    filter: blur(0);
+                }
+            }
+    
+            /* Lueur infernale permanente */
+            @keyframes glowInfernal {
+                0% {
+                    box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+                }
+                100% {
+                    box-shadow: 0 0 40px rgba(255, 0, 0, 1);
+                }
+            }
+    
+            /* Effet d'impulsion des boutons */
+            @keyframes pulseInfernal {
+                0% {
+                    transform: scale(1);
+                    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+                }
+                100% {
+                    transform: scale(1.1);
+                    box-shadow: 0 0 20px rgba(255, 0, 0, 1);
+                }
+            }
+    
+            /* Styles des boutons (effet métal en fusion) */
+            .btnErreur {
+                background: linear-gradient(45deg, #8b0000, #ff0000);
+                border: 3px solid #ff4d4d;
+                color: #fff;
+                padding: 12px 30px;
+                margin: 10px;
+                border-radius: 50px;
+                cursor: pointer;
+                font-family: 'Pirata One', cursive;
+                font-size: 20px;
+                text-transform: uppercase;
+                box-shadow: 0 5px 15px rgba(255, 0, 0, 0.5);
+                transition: all 0.3s ease-in-out;
+                animation: pulseInfernal 1.5s infinite alternate;
+            }
+    
+            /* Effet au survol des boutons */
+            .btnErreur:hover {
+                background: linear-gradient(45deg, #ff4d4d, #ff0000);
+                transform: scale(1.1);
+                box-shadow: 0 10px 25px rgba(255, 0, 0, 0.8);
+            }
+    
+            /* Effet lors du clic sur les boutons */
+            .btnErreur:active {
+                transform: scale(0.9);
+            }
+        ";
+    }
+    
     private static function styleButton(): string
     {
         return '
@@ -704,7 +835,7 @@ class PieceSquadroUI
 
         '  .    self::effetExplosion() . self::effetSanglant() . 
                 self::styleCaseNeutre() . self::styleVictoire() . 
-                self::styleBoiteConfirmation();
+                self::styleBoiteConfirmation() . self::styleBoiteErreur();
     }
 
     private static function attribuerZone()
@@ -903,12 +1034,17 @@ class PieceSquadroUI
     }
 
 
-    public function afficher_erreur(string $erreur, string $fichier, PlateauSquadro $p, string $noir, string $blanc): string
+    public static function afficher_erreur(string $fich, string $pieceId,  PlateauSquadro $p): string
     {
-        return "<h1>Erreur : $erreur</h1><br/>" .
-            self::debForm($fichier) .
-            self::plateauUI($p, $noir, $blanc) .
-            self::finForm();
+        $res = "";
+        $res .= self::debForm($fich);
+        $res .= self::plateauUI($p, "disabled", "disabled");
+        $res .= "<div class='erreur'";
+        $res .= "<p>La pièce $pieceId ne peut pas être déplacée</p>";
+        $res .= "<input type='submit' value='Switch to other' name='erreur' class='btnErreur'/><br/>";
+        $res .= "</div>";
+        $res .= self::finForm();
+        return $res;
     }
 }
 

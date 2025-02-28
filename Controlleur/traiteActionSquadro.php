@@ -1,5 +1,5 @@
 <?php
-require_once '../Modele/action_squadro.php';
+require_once 'action_squadro.php';
 
 
 session_start();
@@ -23,7 +23,7 @@ function traiterAnnulation()
 
 function traiterErreur()
 {
-    session_unset();
+    $_SESSION["position"] = "";
     $_SESSION["etat"] = "choixPiece";
 }
 
@@ -41,8 +41,12 @@ function traiterConfiramtion(string $couleur)
     if (isset($_SESSION["plateau"])) {
         if (isset($_SESSION["position"])) {
             $bouger = new ActionSquadro($_SESSION["plateau"]);
-            $bouger->jouePiece($_SESSION["position"][0], $_SESSION["position"][1]);
-            unset($_SESSION["position"]);
+            if($bouger->jouePiece($_SESSION["position"][0], $_SESSION["position"][1]))
+                unset($_SESSION["position"]);
+            else{
+                $_SESSION["etat"] = "erreur";
+                return;
+            }
             if ($bouger->remporteVictoire($couleurInt))
                 $_SESSION["etat"] = "Victoire";
             else {
@@ -85,6 +89,11 @@ if(isset($_REQUEST["choix"])) {
 
 if(isset($_REQUEST["rejouer"])) {
     rejouer();
+    header('Location: index.php');
+}
+
+if(isset($_REQUEST['erreur'])) {
+    traiterErreur();
     header('Location: index.php');
 }
 
