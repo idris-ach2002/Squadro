@@ -5,13 +5,25 @@ require_once 'action_squadro.php';
 session_start();
 
 
+function login() {
+    if (!isset($_SESSION["login"]))
+    {
+        header('Location: ../Vue/login.php');
+        header('HTTP/1.1 303 See Other');
+    }
+    else
+    {
+        print("Données");
+    }
+}
+
 
 function traiterChoix(string $couleur)
 {
     //stocker la position de la pièce dans un tableau [abcisse, ordonnée] (btn$x-$y) -> ["", "$x-$y"] -> [$x,$y]
     $_SESSION["position"] = explode("-", explode("btn", $_REQUEST[$couleur])[1]);
     //stocker le joueur courant
-    $_SESSION["joueur"] = $couleur;
+    $_SESSION["couleur"] = $couleur;
     $_SESSION["etat"] = "ConfirmationPiece";
 }
 
@@ -50,7 +62,7 @@ function traiterConfiramtion(string $couleur)
             if ($bouger->remporteVictoire($couleurInt))
                 $_SESSION["etat"] = "Victoire";
             else {
-                $_SESSION["joueur"] = $couleur === 'blanc' ? 'noir' : 'blanc';
+                $_SESSION["couleur"] = $couleur === 'blanc' ? 'noir' : 'blanc';
                 $_SESSION["etat"] = "choixPiece";
             }
         } else {
@@ -64,32 +76,35 @@ function traiterConfiramtion(string $couleur)
 }
 
 
-
-
+if ($_SESSION["etat"] == "login") {
+    $_SESSION["etat"] = "choixPiece";
+    $_SESSION["couleur"] = "blanc";
+    login();
+}
 
 
 if (isset($_REQUEST["blanc"])) {
     traiterChoix("blanc");
-    header('Location: index.php');
+    header('Location: index_squadro.php');
 } else if (isset($_REQUEST["noir"])) {
     traiterChoix("noir");
-    header('Location: index.php');
+    header('Location: index_squadro.php');
 }
 
 
 if(isset($_REQUEST["choix"])) {
     switch ($_REQUEST["choix"]) {
-        case "PRESEED": traiterConfiramtion($_SESSION["joueur"]); break;
+        case "PRESEED": traiterConfiramtion($_SESSION["couleur"]); break;
         case "ABORT": traiterAnnulation(); break;
     }
-    header('Location: index.php');
+    header('Location: index_squadro.php');
 }
 
 
 
 if(isset($_REQUEST["rejouer"])) {
     rejouer();
-    header('Location: index.php');
+    header('Location: index_squadro.php');
 }
 
 if(isset($_REQUEST['erreur'])) {

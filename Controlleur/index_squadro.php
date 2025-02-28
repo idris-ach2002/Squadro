@@ -1,6 +1,6 @@
 <?php
-require_once 'PieceSquadroUI.php'; 
-require_once 'plateau_squadro.php'; 
+require_once '../Modele/PieceSquadroUI.php'; 
+require_once '../Modele/plateau_squadro.php'; 
 
 session_start();
 
@@ -19,16 +19,15 @@ echo "<!DOCTYPE html>
 <body>";
 
 
-//génrération d'un plateau;
-$plateau = new PlateauSquadro();
+print($_SESSION["plateau"]);
+// $_SESSION["couleur"] = "blanc";
+//$_SESSION["etat"] = "choixPiece";
 
 
-//stocker le plateau dans une variable de session
-if(!isset($_SESSION["plateau"]))
-    $_SESSION["plateau"] = $plateau;
 
 
 if(!isset($_SESSION["etat"])) {
+    print(2);
     //stocker la toute première action 
     $_SESSION["etat"] = "choixPiece";
     // Afficher l'interface du plateau
@@ -43,21 +42,18 @@ if(!isset($_SESSION["etat"])) {
             break;
         }
         case "choixPiece" : {
-            $blanc = $_SESSION["joueur"] == "blanc" ? "enabled" : "disabled";
-            $noir = $_SESSION["joueur"] == "noir" ? "enabled" : "disabled";
+            print("tes2");
+            $blanc = $_SESSION["couleur"] == "blanc" ? "enabled" : "disabled";
+            $noir = $_SESSION["couleur"] == "noir" ? "enabled" : "disabled";
+            print($blanc . " " . $noir);
             echo PieceSquadroUI::debForm("traiteActionSquadro.php") . 
             PieceSquadroUI::plateauUI($_SESSION["plateau"], $noir, $blanc).
             PieceSquadroUI::finForm();
+            print("test2");
             break;
         }
 
-        case "erreur": {
-            $id = ' ['. $_SESSION["position"][0] . ' , '. $_SESSION["position"][1] . ']';
-            echo PieceSquadroUI::afficher_erreur("traiteActionSquadro.php", $id, $_SESSION["plateau"]); 
-            break;
-        }
-
-        case "Victoire": echo PieceSquadroUI::afficherVictoire($_SESSION["joueur"], "traiteActionSquadro.php"); break;
+        case "Victoire": echo PieceSquadroUI::afficherVictoire($_SESSION["couleur"], "traiteActionSquadro.php"); break;
     }
 }
 
