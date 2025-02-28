@@ -19,7 +19,7 @@ echo "<!DOCTYPE html>
 <body>";
 
 
-print($_SESSION["couleur"]);
+print($_SESSION["plateau"]);
 // $_SESSION["couleur"] = "blanc";
 //$_SESSION["etat"] = "choixPiece";
 
@@ -42,9 +42,10 @@ if(!isset($_SESSION["etat"])) {
             break;
         }
         case "choixPiece" : {
+            print("tes2");
             $blanc = $_SESSION["couleur"] == "blanc" ? "enabled" : "disabled";
             $noir = $_SESSION["couleur"] == "noir" ? "enabled" : "disabled";
-            print("test1");
+            print($blanc . " " . $noir);
             echo PieceSquadroUI::debForm("traiteActionSquadro.php") . 
             PieceSquadroUI::plateauUI($_SESSION["plateau"], $noir, $blanc).
             PieceSquadroUI::finForm();
