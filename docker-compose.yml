@@ -5,6 +5,7 @@ services:
     ports:
       - "8080:80"
     environment:
+      APP_DEBUG: "1"
       sgbd: pgsql
       host: db
       database: squadro_db
@@ -13,6 +14,11 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "php -r 'exit(@file_get_contents(\"http://localhost/\") === false ? 1 : 0);'"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
     restart: unless-stopped
 
   db:

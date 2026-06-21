@@ -1,5 +1,7 @@
 .git
-.gitignore
-ressourcesSquadro.zip
-*.log
+.idea
+.vscode
+node_modules
+vendor
+*.zip
 .DS_Store

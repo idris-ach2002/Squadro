@@ -1,58 +1,64 @@
 <?php
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/../Core/bootstrap.php';
 require_once __DIR__ . '/../Modele/PieceSquadroUI.php';
-require_once __DIR__ . '/../Modele/plateau_squadro.php';
+require_once __DIR__ . '/../Modele/partieSquadro.php';
 
-session_start();
+App::requirePlayer();
+App::initDatabase();
 
-if (!isset($_SESSION['joueur'])) {
-    header('Location: ../Vue/login.php');
-    header('HTTP/1.1 303 See Other');
-    exit;
+$game = null;
+if (isset($_SESSION[App::SESSION_GAME_ID])) {
+    $game = PDOSquadro::getPartieSquadroById((int) $_SESSION[App::SESSION_GAME_ID]);
+    if ($game instanceof PartieSquadro) {
+        $_SESSION[App::SESSION_BOARD] = $game->getPlateau();
+        $_SESSION[App::SESSION_TURN] = $game->getCurrentTurn();
+        if ($game->getGameStatus() === 'finished' && $game->getWinner() !== null) {
+            $_SESSION[App::SESSION_STATE] = 'Victoire';
+            $_SESSION[App::SESSION_TURN] = $game->getWinner();
+        }
+    } else {
+        unset($_SESSION[App::SESSION_GAME_ID], $_SESSION[App::SESSION_PLAYER_COLOR]);
+        App::flash('warning', 'La partie demandée n’existe plus. Une partie locale a été créée.');
+    }
 }
 
-if (!isset($_SESSION['plateau']) || !($_SESSION['plateau'] instanceof PlateauSquadro)) {
-    $_SESSION['plateau'] = new PlateauSquadro();
+$plateau = App::ensureBoard();
+$_SESSION[App::SESSION_STATE] = $_SESSION[App::SESSION_STATE] ?? 'choixPiece';
+$_SESSION[App::SESSION_TURN] = $_SESSION[App::SESSION_TURN] ?? 'blanc';
+$_SESSION[App::SESSION_MODE] = $_SESSION[App::SESSION_MODE] ?? ($game ? 'online' : 'local');
+
+$activeColor = App::activeTurnLabel();
+$mode = (string) $_SESSION[App::SESSION_MODE];
+$playerColor = $_SESSION[App::SESSION_PLAYER_COLOR] ?? null;
+$allowMoves = true;
+
+if ($mode === 'online' && is_string($playerColor)) {
+    $allowMoves = $playerColor === $activeColor;
 }
 
-$_SESSION['etat'] = $_SESSION['etat'] ?? 'choixPiece';
-$_SESSION['couleur'] = $_SESSION['couleur'] ?? 'blanc';
-
-$plateau = $_SESSION['plateau'];
-?>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu Squadro</title>
-    <style><?= PieceSquadroUI::createStyle(); ?></style>
-</head>
-<body>
-<?php
-switch ($_SESSION['etat']) {
-    case 'ConfirmationPiece':
-        $id = '[' . $_SESSION['position'][0] . ' , ' . $_SESSION['position'][1] . ']';
-        echo PieceSquadroUI::confirmationDeplacement('traiteActionSquadro.php', $id, $plateau);
-        break;
-
-    case 'erreur':
-        $id = isset($_SESSION['position']) ? '[' . $_SESSION['position'][0] . ' , ' . $_SESSION['position'][1] . ']' : '';
-        echo PieceSquadroUI::afficher_erreur('traiteActionSquadro.php', $id, $plateau);
-        break;
-
-    case 'Victoire':
-        echo PieceSquadroUI::afficherVictoire($_SESSION['couleur'], 'traiteActionSquadro.php');
-        break;
-
-    case 'choixPiece':
-    default:
-        $blanc = $_SESSION['couleur'] === 'blanc' ? 'enabled' : 'disabled';
-        $noir = $_SESSION['couleur'] === 'noir' ? 'enabled' : 'disabled';
-        echo PieceSquadroUI::debForm('traiteActionSquadro.php')
-            . PieceSquadroUI::plateauUI($plateau, $noir, $blanc)
-            . PieceSquadroUI::finForm();
-        break;
+$selected = null;
+if (isset($_SESSION['position']) && is_array($_SESSION['position']) && count($_SESSION['position']) >= 2) {
+    $selected = [(int) $_SESSION['position'][0], (int) $_SESSION['position'][1]];
 }
-?>
-</body>
-</html>
+
+$destination = PieceSquadroUI::destinationOf($plateau, $selected);
+
+if ($_SESSION[App::SESSION_STATE] === 'Victoire') {
+    $allowMoves = false;
+}
+
+echo PieceSquadroUI::renderGamePage($plateau, [
+    'mode' => $mode,
+    'player' => App::currentPlayer(),
+    'playerColor' => is_string($playerColor) ? $playerColor : null,
+    'activeColor' => $activeColor,
+    'allowMoves' => $allowMoves,
+    'state' => (string) $_SESSION[App::SESSION_STATE],
+    'selected' => $selected,
+    'destination' => $destination,
+    'game' => $game,
+    'flashes' => App::consumeFlash(),
+]);

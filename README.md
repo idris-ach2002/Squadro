@@ -1,19 +1,16 @@
-# Squadro Game
+# Squadro Game — version Dockerisée et refactorisée
 
-Application PHP permettant de jouer à Squadro avec une persistance PostgreSQL pour les joueurs et les parties.
+Application PHP 8.3 / PostgreSQL permettant de jouer à Squadro en duel local ou via une table persistée en base. Cette version remplace l’interface initiale par une UI responsive, nettoie les modèles métier, centralise le bootstrap applicatif et durcit les opérations de session, de routage et de persistance.
 
-## Lancement avec Docker
-
-Prérequis unique : Docker Desktop ou Docker Engine avec Docker Compose.
+## Lancement rapide
 
 ```bash
+docker compose down -v
 docker compose up --build
 ```
 
-Puis ouvrir :
-
-- Application : http://localhost:8080
-- Adminer : http://localhost:8081
+Application : <http://localhost:8080>  
+Adminer : <http://localhost:8081>
 
 Identifiants Adminer :
 
@@ -25,76 +22,93 @@ Mot de passe : password
 Base : squadro_db
 ```
 
-## Arrêt
+## Modes de jeu
 
-```bash
-docker compose down
-```
+### Duel local instantané
 
-Pour supprimer aussi les données PostgreSQL :
+Une seule session contrôle les deux couleurs. C’est le mode le plus simple pour tester le plateau, les animations et les règles sans attendre un second joueur.
 
-```bash
-docker compose down -v
-```
+### Partie en ligne persistée
 
-## Architecture Docker
+Le joueur créateur prend les blancs. La partie est enregistrée dans PostgreSQL et un second joueur peut la rejoindre depuis le lobby. Les coups sont sauvegardés dans la table `PartieSquadro` : plateau JSON, tour courant, statut, dernier coup, nombre de coups, vainqueur.
 
-- `app` : Apache + PHP 8.3 + extensions PDO/PostgreSQL.
-- `db` : PostgreSQL 16 avec initialisation depuis `SQL/squadro.sql`.
-- `adminer` : interface web optionnelle pour consulter la base.
+## Ce qui a été développé dans cette version
 
-La configuration de base de données est fournie par Docker Compose via les variables :
+### UI / UX
+
+- nouvelle interface globale `Squadro Arena` ;
+- layout responsive desktop / tablette / mobile ;
+- plateau 9×9 avec rails de vitesse autour du plateau 7×7 ;
+- prévisualisation de destination au survol d’une pièce ;
+- confirmation de coup avant exécution ;
+- overlay de victoire ;
+- panneaux latéraux : règles rapides, progression, historique, statistiques de partie ;
+- badges de tour, mode, joueur et couleur ;
+- lobby moderne : duel local, création en ligne, rejoindre une table, parties en cours ;
+- feedback utilisateur par flash messages ;
+- raccourcis clavier simples : `M` pour menu, `U` pour annuler le dernier coup de session.
+
+### Fonctionnalités de jeu
+
+- reset de partie ;
+- annulation locale du dernier coup avec pile d’undo limitée ;
+- historique de session ;
+- synchronisation DB des coups si une partie persistée est ouverte ;
+- calcul de progression blanc/noir ;
+- stockage du tour courant ;
+- stockage du vainqueur ;
+- conservation du plateau en JSON robuste.
+
+### Maintenabilité
+
+- ajout de `Core/App.php` et `Core/bootstrap.php` pour centraliser : session, redirections, flash messages, DB, erreurs ;
+- suppression des sorties parasites dans les modèles ;
+- suppression des tests inline qui pouvaient polluer les headers HTTP ;
+- modèles métier nettoyés : `PieceSquadro`, `PlateauSquadro`, `ActionSquadro`, `PartieSquadro`, `JoueurSquadro` ;
+- accès DB réécrit dans `skel/PDOSquadro.skel.php` avec requêtes préparées et mapping explicite ;
+- schéma SQL idempotent avec colonnes métier supplémentaires ;
+- assets isolés dans `assets/css/app.css` et `assets/js/app.js` ;
+- script de lint et smoke test dans `tests/` ;
+- configuration Docker durcie : `session.use_strict_mode`, OPcache, `ServerName`, healthchecks.
+
+## Arborescence principale
 
 ```text
-sgbd=pgsql
-host=db
-database=squadro_db
-user=squadro_user
-password=password
+Core/
+  App.php              Bootstrap applicatif, sessions, flash, DB, undo
+  bootstrap.php        Chargement minimal commun
+Controlleur/
+  index_squadro.php    Rendu principal du plateau
+  traiteActionSquadro.php Actions de jeu
+Modele/
+  piece_squadro.php    Pièce : couleur, direction, sérialisation
+  plateau_squadro.php  Plateau et vitesses
+  action_squadro.php   Règles de déplacement et victoire
+  PieceSquadroUI.php   Rendu HTML du plateau et de l’écran de jeu
+  partieSquadro.php    Partie persistée
+  joueurSquadro.php    Joueur
+Vue/
+  login.php            Connexion joueur
+  choixAction.php      Lobby
+  attente_joueur.php   Création partie en ligne
+  partieAttente.php    Liste des parties en attente
+  partiesEnCours.php   Liste des parties du joueur
+SQL/
+  squadro.sql          Schéma PostgreSQL idempotent
+assets/
+  css/app.css          Design system et plateau
+  js/app.js            Prévisualisation destination / raccourcis
 ```
 
-Un fichier `.env.php` fournit les mêmes valeurs par défaut pour éviter une configuration manuelle.
-
-## Structure du projet
-
-```text
-Controlleur/  Contrôleurs et routing applicatif
-Modele/       Classes métier Squadro
-Vue/          Pages PHP affichées à l'utilisateur
-SQL/          Schéma PostgreSQL
-skel/         Couche PDO
-Logo/         Assets graphiques
-```
-
-## Corrections intégrées
-
-- Ajout d'un `Dockerfile`, d'un `docker-compose.yml` et d'une `.dockerignore`.
-- Ajout de la configuration `.env.php` compatible Docker.
-- Suppression des sorties de debug qui bloquaient les redirections HTTP.
-- Correction du `require_once` cassé dans le contrôleur principal.
-- Correction des chemins SQL avec `__DIR__` pour fiabiliser l'exécution Docker/Apache.
-- Correction de la sérialisation JSON du plateau : les objets `PieceSquadro` sont maintenant correctement persistés et restaurés.
-- Correction du flux de connexion et des sessions (`joueur`, `etat`, `couleur`, `plateau`).
-- Correction des pages de menu et de parties pour éviter les `header already sent`.
-- Correction du lien vers une page inexistante pour reprendre une partie.
-- Initialisation automatique du plateau si la session n'en contient pas.
-
-## Commandes de vérification locale sans Docker
-
-Ces commandes vérifient au minimum que les fichiers PHP sont syntaxiquement valides :
+## Vérifications locales hors Docker
 
 ```bash
-find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -I{} php -l {}
+find . -name '*.php' -print0 | xargs -0 -n1 php -l
+php tests/smoke.php
 ```
 
-Test rapide de la sérialisation du plateau :
+Le smoke test vérifie le modèle de plateau, un déplacement blanc de base et la sérialisation JSON.
 
-```bash
-php -r 'require "Modele/plateau_squadro.php"; $p=new PlateauSquadro(); $q=PlateauSquadro::fromJson($p->toJson()); echo get_class($q->getPiece(1,0)).PHP_EOL;'
-```
+## Notes techniques
 
-## Correctif du 21/06/2026
-
-- Suppression des balises `?>` finales dans les fichiers PHP purs afin d'éviter toute sortie blanche avant `session_start()` et `header()`.
-- Suppression du bloc de tests non protégé dans `Modele/array_piece_squadro.php`.
-- Ajout de `ServerName localhost` dans l'image Apache pour supprimer l'avertissement `AH00558`.
+Le mode en ligne reste volontairement simple : il n’utilise pas de WebSocket. Chaque joueur peut utiliser le bouton de synchronisation ou recharger la page pour récupérer l’état courant depuis PostgreSQL. La base contient déjà les champs nécessaires pour poursuivre vers une version temps réel plus avancée.

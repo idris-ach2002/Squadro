@@ -1,9 +1,11 @@
 <?php
 
-session_start();
+declare(strict_types=1);
 
-$_SESSION["etat"] = "login";
+require_once __DIR__ . '/Core/bootstrap.php';
 
-header('Location: Controlleur/traiteActionSquadro.php');
-header('HTTP/1.1 303 See Other');
+if (isset($_SESSION[App::SESSION_PLAYER])) {
+    App::redirect('/Vue/choixAction.php');
+}
 
+App::redirect('/Vue/login.php');

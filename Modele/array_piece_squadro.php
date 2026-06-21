@@ -1,5 +1,8 @@
 <?php
-require_once('piece_squadro.php');
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/piece_squadro.php';
 /**
  * Classe représentant un tableau de pièces Squadro avec une implémentation de ArrayAccess et Countable.
  * Permet de gérer les pièces comme un tableau tout en validant les types et en fournissant des méthodes utiles.

@@ -1,24 +1,26 @@
 <?php
-session_start();
 
-if (!isset($_SESSION['joueur'])) {
-    header('Location: login.php');
-    header('HTTP/1.1 303 See Other');
-    exit;
-}
+declare(strict_types=1);
 
+require_once __DIR__ . '/../Core/bootstrap.php';
 require_once __DIR__ . '/../Modele/plateau_squadro.php';
 require_once __DIR__ . '/../skel/PDOSquadro.skel.php';
-require_once __DIR__ . '/../env/db.php';
+
+App::requirePlayer();
+App::initDatabase();
 
 $plateau = new PlateauSquadro();
-$_SESSION['plateau'] = $plateau;
-$_SESSION['etat'] = 'choixPiece';
-$_SESSION['couleur'] = 'blanc';
+$gameId = PDOSquadro::creerPartieSquadro($_SESSION[App::SESSION_PLAYER], $plateau->toJson(), 'waitingForPlayer');
 
-PDOSquadro::initPDO(getenv('sgbd'), getenv('host'), getenv('database'), getenv('user'), getenv('password'));
-PDOSquadro::creerPartieSquadro($_SESSION['joueur'], $plateau->toJson());
+$_SESSION[App::SESSION_BOARD] = $plateau;
+$_SESSION[App::SESSION_STATE] = 'choixPiece';
+$_SESSION[App::SESSION_TURN] = 'blanc';
+$_SESSION[App::SESSION_MODE] = 'online';
+$_SESSION[App::SESSION_PLAYER_COLOR] = 'blanc';
+$_SESSION[App::SESSION_GAME_ID] = $gameId;
+$_SESSION[App::SESSION_HISTORY] = [];
+$_SESSION[App::SESSION_UNDO] = [];
+unset($_SESSION['position']);
 
-header('Location: ../Controlleur/index_squadro.php');
-header('HTTP/1.1 303 See Other');
-exit;
+App::flash('success', 'Partie #' . $gameId . ' créée. Vous jouez les blancs.');
+App::redirect('/Controlleur/index_squadro.php');

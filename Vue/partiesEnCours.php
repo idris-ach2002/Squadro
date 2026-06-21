@@ -1,59 +1,73 @@
 <?php
-session_start();
 
-if (!isset($_SESSION['joueur'])) {
-    header('Location: login.php');
-    header('HTTP/1.1 303 See Other');
-    exit;
-}
+declare(strict_types=1);
 
+require_once __DIR__ . '/../Core/bootstrap.php';
 require_once __DIR__ . '/../Modele/plateau_squadro.php';
 require_once __DIR__ . '/../skel/PDOSquadro.skel.php';
-require_once __DIR__ . '/../env/db.php';
-require_once __DIR__ . '/../Modele/partieSquadro.php';
 
-PDOSquadro::initPDO(getenv('sgbd'), getenv('host'), getenv('database'), getenv('user'), getenv('password'));
+App::requirePlayer();
+App::initDatabase();
 
-if (isset($_POST['partie'])) {
-    $partie = PDOSquadro::getPartieSquadroById((int) $_POST['partie']);
-    if ($partie !== null) {
-        $_SESSION['plateau'] = $partie->getPlateau();
-        $_SESSION['etat'] = 'choixPiece';
-        $_SESSION['couleur'] = 'blanc';
+$player = App::currentPlayer();
 
-        header('Location: ../Controlleur/index_squadro.php');
-        header('HTTP/1.1 303 See Other');
-        exit;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['partie'])) {
+    $partieId = (int) $_POST['partie'];
+    $partie = PDOSquadro::getPartieSquadroById($partieId);
+    if ($partie instanceof PartieSquadro) {
+        $_SESSION[App::SESSION_BOARD] = $partie->getPlateau();
+        $_SESSION[App::SESSION_STATE] = $partie->getGameStatus() === 'finished' ? 'Victoire' : 'choixPiece';
+        $_SESSION[App::SESSION_TURN] = $partie->getWinner() ?? $partie->getCurrentTurn();
+        $_SESSION[App::SESSION_MODE] = 'online';
+        $_SESSION[App::SESSION_GAME_ID] = $partieId;
+        $playerId = $player?->getId();
+        $_SESSION[App::SESSION_PLAYER_COLOR] = $partie->getPlayerOne()->getId() === $playerId ? 'blanc' : 'noir';
+        $_SESSION[App::SESSION_HISTORY] = [];
+        $_SESSION[App::SESSION_UNDO] = [];
+        App::redirect('/Controlleur/index_squadro.php');
     }
+
+    App::flash('danger', 'Impossible d’ouvrir cette partie.');
+    App::redirect('/Vue/partiesEnCours.php');
 }
 
-$tab_parties = PDOSquadro::getAllPartieSquadroByPlayerNameNonTerminees($_SESSION['joueur']);
-$_SESSION['etat'] = 'waitingForPlayer';
+$parties = PDOSquadro::getAllPartieSquadroByPlayerNameNonTerminees($_SESSION[App::SESSION_PLAYER]);
+$flashes = App::consumeFlash();
 ?>
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Parties en cours</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Mes parties</title>
+    <link rel="stylesheet" href="/assets/css/app.css">
 </head>
-<body>
-    <h1>Parties en cours</h1>
-    <?php if (!empty($tab_parties)): ?>
-        <form action="<?= htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>" method="post">
-            <label for="partie">Sélectionnez une partie :</label>
-            <select name="partie" id="partie">
-                <?php foreach ($tab_parties as $partieJson): ?>
-                    <?php $partie = PartieSquadro::fromJson($partieJson); ?>
-                    <option value="<?= htmlspecialchars((string) $partie->getPartieID(), ENT_QUOTES, 'UTF-8'); ?>">
-                        <?= htmlspecialchars($partie->getPartieID() . ' - ' . $partie->getGameStatus(), ENT_QUOTES, 'UTF-8'); ?>
-                    </option>
+<body class="app-bg">
+<main class="shell single">
+    <section class="list-card">
+        <p class="eyebrow">Sauvegardes PostgreSQL</p>
+        <h1>Mes parties en cours</h1>
+        <p>Rouvre une partie active ou en attente liée à votre joueur.</p>
+        <?php foreach ($flashes as $flash): ?>
+            <div class="alert <?= App::e($flash['type']); ?>"><?= App::e($flash['message']); ?></div>
+        <?php endforeach; ?>
+        <div class="table-list">
+            <?php if ($parties === []): ?>
+                <div class="alert warning">Aucune partie en cours pour ce joueur.</div>
+            <?php else: ?>
+                <?php foreach ($parties as $partieJson): $partie = PartieSquadro::fromJson($partieJson); ?>
+                    <form method="post" class="game-row">
+                        <div>
+                            <strong>Partie #<?= App::e($partie->getPartieID()); ?> · <?= App::e($partie->getGameStatus()); ?></strong>
+                            <p>Blanc : <?= App::e($partie->getPlayerOne()->getNomJoueur()); ?> · Noir : <?= App::e($partie->getPlayerTwo()?->getNomJoueur() ?? 'en attente'); ?> · tour <?= App::e($partie->getCurrentTurn()); ?></p>
+                        </div>
+                        <button class="btn primary" name="partie" value="<?= App::e($partie->getPartieID()); ?>">Ouvrir</button>
+                    </form>
                 <?php endforeach; ?>
-            </select>
-            <button type="submit">Ouvrir</button>
-        </form>
-    <?php else: ?>
-        <p>Aucune partie disponible pour le moment.</p>
-    <?php endif; ?>
-    <p><a href="choixAction.php">Retour au menu</a></p>
+            <?php endif; ?>
+        </div>
+        <p style="margin-top:18px"><a class="btn ghost" href="/Vue/choixAction.php">Retour au menu</a></p>
+    </section>
+</main>
 </body>
 </html>

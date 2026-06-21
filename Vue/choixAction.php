@@ -1,70 +1,97 @@
 <?php
-session_start();
 
-if (!isset($_SESSION['joueur'])) {
-    header('Location: login.php');
-    header('HTTP/1.1 303 See Other');
-    exit;
-}
+declare(strict_types=1);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    switch ($_POST['action']) {
-        case 'nouvelle_partie':
-            header('Location: attente_joueur.php');
-            header('HTTP/1.1 303 See Other');
-            exit;
+require_once __DIR__ . '/../Core/bootstrap.php';
+require_once __DIR__ . '/../Modele/plateau_squadro.php';
+require_once __DIR__ . '/../skel/PDOSquadro.skel.php';
+
+App::requirePlayer();
+App::initDatabase();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = (string) ($_POST['action'] ?? '');
+    switch ($action) {
+        case 'duel_local':
+            $_SESSION[App::SESSION_BOARD] = new PlateauSquadro();
+            $_SESSION[App::SESSION_STATE] = 'choixPiece';
+            $_SESSION[App::SESSION_TURN] = 'blanc';
+            $_SESSION[App::SESSION_MODE] = 'local';
+            unset($_SESSION[App::SESSION_GAME_ID], $_SESSION[App::SESSION_PLAYER_COLOR], $_SESSION[App::SESSION_HISTORY], $_SESSION[App::SESSION_UNDO], $_SESSION['position']);
+            App::redirect('/Controlleur/index_squadro.php');
+
+        case 'creer_online':
+            App::redirect('/Vue/attente_joueur.php');
+
         case 'parties_en_cours':
-            $_SESSION['etat'] = 'consultePartieEnCours';
-            header('Location: partiesEnCours.php');
-            header('HTTP/1.1 303 See Other');
-            exit;
+            App::redirect('/Vue/partiesEnCours.php');
+
         case 'parties_attente':
-            header('Location: partieAttente.php');
-            header('HTTP/1.1 303 See Other');
-            exit;
-        case 'parties_terminees':
-            $_SESSION['etat'] = 'consultePartieVictoire';
-            header('Location: choixAction.php');
-            header('HTTP/1.1 303 See Other');
-            exit;
+            App::redirect('/Vue/partieAttente.php');
+
         case 'quitter':
             session_unset();
             session_destroy();
-            header('Location: ../index.php');
-            header('HTTP/1.1 303 See Other');
-            exit;
+            App::redirect('/Vue/login.php');
     }
 }
 
-function getPage(): string
-{
-    return '<!DOCTYPE html>
+$player = App::currentPlayer();
+$stats = PDOSquadro::getDashboardStats();
+$flashes = App::consumeFlash();
+?>
+<!doctype html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu du Jeu</title>
-    <style>
-        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f4f4f4; margin: 0; }
-        .menu { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,.1); text-align: center; }
-        form { margin: 10px 0; }
-        button { width: 100%; padding: 10px; margin: 5px 0; border: none; border-radius: 5px; background: blue; color: white; font-size: 16px; cursor: pointer; }
-        button:hover { background: darkblue; }
-    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Lobby Squadro</title>
+    <link rel="stylesheet" href="/assets/css/app.css">
 </head>
-<body>
-    <div class="menu">
-        <h1>Menu du Jeu</h1>
-        <form action="' . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8') . '" method="post">
-            <button type="submit" name="action" value="nouvelle_partie">Nouvelle Partie</button>
-            <button type="submit" name="action" value="parties_en_cours">Parties en Cours</button>
-            <button type="submit" name="action" value="parties_attente">Parties en Attente</button>
-            <button type="submit" name="action" value="parties_terminees">Parties Terminées</button>
-            <button type="submit" name="action" value="quitter">Quitter la Session</button>
+<body class="app-bg">
+<main class="shell single">
+    <section class="lobby-card">
+        <div class="hero-card">
+            <p class="eyebrow">Lobby</p>
+            <h1>Bonjour <?= App::e($player?->getNomJoueur()); ?></h1>
+            <p>Choisis un mode de jeu. Le duel local est immédiat. Le mode en ligne enregistre la partie en base et permet à un second joueur de la rejoindre.</p>
+            <?php foreach ($flashes as $flash): ?>
+                <div class="alert <?= App::e($flash['type']); ?>"><?= App::e($flash['message']); ?></div>
+            <?php endforeach; ?>
+            <div class="stat-grid">
+                <div><strong><?= App::e($stats['waiting']); ?></strong><span>Tables en attente</span></div>
+                <div><strong><?= App::e($stats['active']); ?></strong><span>Parties actives</span></div>
+                <div><strong><?= App::e($stats['finished']); ?></strong><span>Parties terminées</span></div>
+                <div><strong>4</strong><span>Pièces à sortir</span></div>
+            </div>
+        </div>
+        <form method="post" class="form-card">
+            <p class="eyebrow">Actions</p>
+            <h2>Menu du jeu</h2>
+            <div class="menu-grid">
+                <button class="menu-action" name="action" value="duel_local">
+                    <strong>Duel local instantané</strong>
+                    <span>Une seule session contrôle les deux couleurs. Idéal pour tester vite.</span>
+                </button>
+                <button class="menu-action" name="action" value="creer_online">
+                    <strong>Créer une partie en ligne</strong>
+                    <span>Crée une table persistée et prend les blancs.</span>
+                </button>
+                <button class="menu-action" name="action" value="parties_attente">
+                    <strong>Rejoindre une table</strong>
+                    <span>Liste les parties en attente d’un second joueur.</span>
+                </button>
+                <button class="menu-action" name="action" value="parties_en_cours">
+                    <strong>Mes parties en cours</strong>
+                    <span>Rouvre les parties associées à ton profil.</span>
+                </button>
+                <button class="menu-action danger" name="action" value="quitter">
+                    <strong>Déconnexion</strong>
+                    <span>Ferme la session PHP courante.</span>
+                </button>
+            </div>
         </form>
-    </div>
+    </section>
+</main>
 </body>
-</html>';
-}
-
-echo getPage();
+</html>
