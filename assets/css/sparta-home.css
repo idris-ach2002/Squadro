@@ -1,0 +1,512 @@
+:root {
+    --sparta-black: #090605;
+    --sparta-obsidian: #130d0a;
+    --sparta-bronze: #b46a2a;
+    --sparta-gold: #f2c16b;
+    --sparta-red: #8f1d16;
+    --sparta-blood: #c83224;
+    --sparta-ivory: #f5dfbd;
+    --sparta-muted: #b99b74;
+}
+
+body.sparta-home {
+    min-height: 100vh;
+    overflow-x: hidden;
+    color: var(--sparta-ivory);
+    background:
+        radial-gradient(circle at 20% 20%, rgba(196, 65, 27, .20), transparent 28%),
+        radial-gradient(circle at 80% 10%, rgba(242, 193, 107, .12), transparent 30%),
+        linear-gradient(135deg, rgba(8, 6, 5, .94), rgba(23, 10, 7, .96)),
+        #070504;
+    position: relative;
+}
+
+body.sparta-home::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(90deg, rgba(255, 255, 255, .035) 1px, transparent 1px),
+        linear-gradient(rgba(255, 255, 255, .025) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: radial-gradient(circle at center, black, transparent 78%);
+    opacity: .28;
+}
+
+body.sparta-home::after {
+    content: "";
+    position: fixed;
+    inset: -20%;
+    pointer-events: none;
+    background-image:
+        radial-gradient(circle, rgba(242, 193, 107, .85) 0 1px, transparent 2px),
+        radial-gradient(circle, rgba(200, 50, 36, .65) 0 1px, transparent 2px);
+    background-size: 140px 180px, 220px 260px;
+    animation: emberDrift 18s linear infinite;
+    opacity: .28;
+}
+
+.sparta-shell {
+    width: min(1180px, calc(100% - 36px));
+    min-height: 100vh;
+    margin: 0 auto;
+    display: grid;
+    place-items: center;
+    padding: 46px 0;
+    position: relative;
+    z-index: 1;
+}
+
+.sparta-card {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(360px, .85fr);
+    gap: 0;
+    border: 1px solid rgba(242, 193, 107, .26);
+    border-radius: 34px;
+    overflow: hidden;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, .08), rgba(255, 255, 255, .025)),
+        rgba(12, 8, 6, .82);
+    box-shadow:
+        0 34px 120px rgba(0, 0, 0, .62),
+        inset 0 0 0 1px rgba(255, 255, 255, .045);
+    backdrop-filter: blur(14px);
+}
+
+.sparta-hero {
+    min-height: 640px;
+    padding: clamp(34px, 5vw, 72px);
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 72% 32%, rgba(242, 193, 107, .17), transparent 20%),
+        linear-gradient(135deg, rgba(143, 29, 22, .32), rgba(12, 8, 6, .10));
+}
+
+.sparta-hero::before {
+    content: "Λ";
+    position: absolute;
+    right: clamp(10px, 6vw, 68px);
+    top: 48%;
+    transform: translateY(-50%);
+    font-size: clamp(220px, 31vw, 430px);
+    font-weight: 900;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 2px rgba(242, 193, 107, .20);
+    text-shadow: 0 0 52px rgba(200, 50, 36, .20);
+    opacity: .88;
+    animation: sigilPulse 4.8s ease-in-out infinite;
+}
+
+.sparta-hero::after {
+    content: "";
+    position: absolute;
+    width: 560px;
+    height: 560px;
+    right: -210px;
+    bottom: -230px;
+    border-radius: 50%;
+    border: 2px solid rgba(242, 193, 107, .22);
+    box-shadow:
+        inset 0 0 0 28px rgba(180, 106, 42, .10),
+        inset 0 0 0 54px rgba(255, 255, 255, .035),
+        0 0 90px rgba(242, 193, 107, .11);
+    animation: shieldBreath 6s ease-in-out infinite;
+}
+
+.sparta-mark {
+    width: 86px;
+    height: 86px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    margin-bottom: 28px;
+    color: var(--sparta-gold);
+    background:
+        radial-gradient(circle at 35% 28%, rgba(255, 255, 255, .22), transparent 22%),
+        linear-gradient(145deg, rgba(180, 106, 42, .44), rgba(143, 29, 22, .35));
+    border: 1px solid rgba(242, 193, 107, .42);
+    box-shadow:
+        0 0 34px rgba(200, 50, 36, .22),
+        inset 0 0 18px rgba(0, 0, 0, .44);
+    position: relative;
+    animation: entranceDrop .9s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.sparta-mark span {
+    font-size: 48px;
+    font-weight: 900;
+    transform: translateY(-2px);
+    text-shadow: 0 4px 18px rgba(0, 0, 0, .65);
+}
+
+.sparta-eyebrow {
+    margin: 0 0 14px;
+    color: var(--sparta-gold);
+    text-transform: uppercase;
+    letter-spacing: .34em;
+    font-size: 12px;
+    font-weight: 800;
+    animation: fadeRise .9s .12s both;
+}
+
+.sparta-title {
+    max-width: 760px;
+    margin: 0;
+    font-size: clamp(48px, 8vw, 104px);
+    line-height: .82;
+    letter-spacing: -.075em;
+    text-transform: uppercase;
+    color: var(--sparta-ivory);
+    text-shadow:
+        0 4px 0 rgba(0, 0, 0, .34),
+        0 18px 48px rgba(0, 0, 0, .70);
+    animation: fadeRise .9s .22s both;
+}
+
+.sparta-title strong {
+    display: block;
+    color: var(--sparta-gold);
+    letter-spacing: -.045em;
+    filter: drop-shadow(0 0 28px rgba(242, 193, 107, .16));
+}
+
+.sparta-lead {
+    max-width: 590px;
+    margin: 30px 0 0;
+    font-size: clamp(18px, 2vw, 23px);
+    line-height: 1.45;
+    color: rgba(245, 223, 189, .82);
+    animation: fadeRise .9s .34s both;
+}
+
+.sparta-line {
+    width: min(460px, 90%);
+    height: 1px;
+    margin: 34px 0;
+    background: linear-gradient(90deg, transparent, var(--sparta-gold), var(--sparta-red), transparent);
+    position: relative;
+    animation: bladeSweep 2.6s ease-in-out infinite;
+}
+
+.sparta-oath {
+    display: grid;
+    gap: 13px;
+    max-width: 520px;
+    margin-top: 30px;
+    position: relative;
+    z-index: 1;
+}
+
+.sparta-oath span {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: fit-content;
+    padding: 11px 16px;
+    border: 1px solid rgba(242, 193, 107, .22);
+    border-radius: 999px;
+    background: rgba(0, 0, 0, .24);
+    color: rgba(245, 223, 189, .85);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .035);
+    animation: fadeRise .8s both;
+}
+
+.sparta-oath span:nth-child(1) {
+    animation-delay: .46s;
+}
+
+.sparta-oath span:nth-child(2) {
+    animation-delay: .58s;
+}
+
+.sparta-oath span:nth-child(3) {
+    animation-delay: .70s;
+}
+
+.sparta-oath i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--sparta-blood);
+    box-shadow: 0 0 18px rgba(200, 50, 36, .9);
+    flex: 0 0 auto;
+}
+
+.sparta-form-panel {
+    padding: clamp(30px, 4vw, 54px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .015)),
+        rgba(8, 6, 5, .72);
+    border-left: 1px solid rgba(242, 193, 107, .18);
+    position: relative;
+}
+
+.sparta-form-panel::before {
+    content: "";
+    position: absolute;
+    inset: 22px;
+    border: 1px solid rgba(242, 193, 107, .16);
+    border-radius: 24px;
+    pointer-events: none;
+}
+
+.sparta-form-inner {
+    position: relative;
+    z-index: 1;
+}
+
+.sparta-form-panel h2 {
+    margin: 0 0 14px;
+    font-size: clamp(30px, 4vw, 48px);
+    line-height: .95;
+    text-transform: uppercase;
+    letter-spacing: -.04em;
+}
+
+.sparta-form-panel p {
+    margin: 0 0 30px;
+    color: rgba(245, 223, 189, .68);
+    line-height: 1.55;
+}
+
+.sparta-form {
+    margin: 0;
+}
+
+.sparta-field {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.sparta-field label {
+    color: var(--sparta-gold);
+    text-transform: uppercase;
+    letter-spacing: .16em;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.sparta-input {
+    width: 100%;
+    height: 62px;
+    border: 1px solid rgba(242, 193, 107, .30);
+    border-radius: 18px;
+    padding: 0 18px;
+    color: var(--sparta-ivory);
+    background: rgba(0, 0, 0, .34);
+    outline: none;
+    font-size: 17px;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .035);
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
+}
+
+.sparta-input::placeholder {
+    color: rgba(245, 223, 189, .38);
+}
+
+.sparta-input:focus {
+    border-color: rgba(242, 193, 107, .82);
+    box-shadow:
+        0 0 0 4px rgba(242, 193, 107, .11),
+        inset 0 0 0 1px rgba(255, 255, 255, .06);
+    transform: translateY(-1px);
+}
+
+.sparta-button {
+    width: 100%;
+    min-height: 64px;
+    border: 0;
+    border-radius: 18px;
+    cursor: pointer;
+    color: #1c0d07;
+    background:
+        linear-gradient(135deg, #f8d78a, #d98d37 42%, #b73724 100%);
+    font-weight: 950;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    box-shadow:
+        0 20px 42px rgba(143, 29, 22, .34),
+        inset 0 1px 0 rgba(255, 255, 255, .35);
+    position: relative;
+    overflow: hidden;
+    transition:
+        transform .2s ease,
+        filter .2s ease;
+}
+
+.sparta-button::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .36), transparent);
+    transform: translateX(-120%);
+    animation: buttonGlint 3.4s ease-in-out infinite;
+}
+
+.sparta-button:hover {
+    transform: translateY(-2px);
+    filter: saturate(1.15) contrast(1.05);
+}
+
+.sparta-alert {
+    margin: 0 0 18px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(242, 193, 107, .22);
+    background: rgba(0, 0, 0, .34);
+    color: var(--sparta-ivory);
+}
+
+.sparta-alert.danger {
+    border-color: rgba(200, 50, 36, .55);
+    background: rgba(143, 29, 22, .18);
+}
+
+.sparta-alert.success {
+    border-color: rgba(242, 193, 107, .48);
+    background: rgba(180, 106, 42, .18);
+}
+
+.sparta-footer-note {
+    margin-top: 18px;
+    color: rgba(245, 223, 189, .52);
+    font-size: 13px;
+    text-align: center;
+}
+
+@keyframes emberDrift {
+    from {
+        transform: translate3d(0, 0, 0) rotate(0deg);
+    }
+
+    to {
+        transform: translate3d(-90px, -140px, 0) rotate(2deg);
+    }
+}
+
+@keyframes sigilPulse {
+    0%,
+    100% {
+        opacity: .44;
+        transform: translateY(-50%) scale(.98);
+    }
+
+    50% {
+        opacity: .82;
+        transform: translateY(-50%) scale(1.03);
+    }
+}
+
+@keyframes shieldBreath {
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: .72;
+    }
+
+    50% {
+        transform: scale(1.045);
+        opacity: .98;
+    }
+}
+
+@keyframes fadeRise {
+    from {
+        opacity: 0;
+        transform: translateY(22px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes entranceDrop {
+    from {
+        opacity: 0;
+        transform: translateY(-22px) scale(.92);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes bladeSweep {
+    0%,
+    100% {
+        opacity: .45;
+        transform: scaleX(.72);
+        transform-origin: left;
+    }
+
+    50% {
+        opacity: 1;
+        transform: scaleX(1);
+        transform-origin: left;
+    }
+}
+
+@keyframes buttonGlint {
+    0%,
+    42% {
+        transform: translateX(-130%);
+    }
+
+    58%,
+    100% {
+        transform: translateX(130%);
+    }
+}
+
+@media (max-width: 920px) {
+    .sparta-card {
+        grid-template-columns: 1fr;
+    }
+
+    .sparta-hero {
+        min-height: auto;
+    }
+
+    .sparta-form-panel {
+        border-left: 0;
+        border-top: 1px solid rgba(242, 193, 107, .18);
+    }
+}
+
+@media (max-width: 560px) {
+    .sparta-shell {
+        width: min(100% - 22px, 1180px);
+        padding: 18px 0;
+    }
+
+    .sparta-card {
+        border-radius: 24px;
+    }
+
+    .sparta-hero,
+    .sparta-form-panel {
+        padding: 28px;
+    }
+
+    .sparta-title {
+        font-size: 48px;
+    }
+
+    .sparta-oath span {
+        width: 100%;
+    }
+}

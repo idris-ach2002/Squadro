@@ -1,0 +1,568 @@
+:root {
+    --bg: #070403;
+    --surface: rgba(20, 12, 8, .82);
+    --surface-strong: rgba(31, 17, 10, .94);
+    --surface-soft: rgba(242, 193, 107, .08);
+    --line: rgba(242, 193, 107, .22);
+    --text: #f7e2bf;
+    --muted: #c8a982;
+    --gold: #c88332;
+    --gold-strong: #f6d28a;
+    --blue: #d94631;
+    --red: #c83224;
+    --green: #e8ad54;
+    --black-piece: #130d0a;
+    --white-piece: #f1dcc0;
+    --shadow: 0 28px 84px rgba(0, 0, 0, .56);
+}
+
+body.greek-theme {
+    min-height: 100vh;
+    color: var(--text);
+    background:
+        radial-gradient(circle at 16% 14%, rgba(200, 50, 36, .24), transparent 28%),
+        radial-gradient(circle at 86% 10%, rgba(246, 210, 138, .14), transparent 32%),
+        radial-gradient(circle at 70% 86%, rgba(200, 131, 50, .16), transparent 36%),
+        linear-gradient(135deg, rgba(7, 4, 3, .97), rgba(28, 12, 8, .97)),
+        #070403;
+    isolation: isolate;
+}
+
+body.greek-theme::before,
+body.greek-theme::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+}
+
+body.greek-theme::before {
+    background:
+        linear-gradient(90deg, rgba(246, 210, 138, .035) 1px, transparent 1px),
+        linear-gradient(rgba(246, 210, 138, .025) 1px, transparent 1px),
+        radial-gradient(circle at 50% 35%, transparent 0 34%, rgba(246, 210, 138, .05) 35% 36%, transparent 37% 100%);
+    background-size: 76px 76px, 76px 76px, 100% 100%;
+    mask-image: radial-gradient(circle at center, black, transparent 80%);
+    opacity: .72;
+}
+
+body.greek-theme::after {
+    inset: -22%;
+    background-image:
+        radial-gradient(circle, rgba(246, 210, 138, .95) 0 1px, transparent 2px),
+        radial-gradient(circle, rgba(200, 50, 36, .72) 0 1px, transparent 2px);
+    background-size: 140px 190px, 240px 290px;
+    opacity: .25;
+    animation: greekEmbers 20s linear infinite;
+}
+
+.greek-theme .game-shell {
+    position: relative;
+}
+
+.greek-theme .game-shell::before {
+    content: "Λ";
+    position: fixed;
+    right: clamp(-40px, 4vw, 70px);
+    top: 52%;
+    transform: translateY(-50%);
+    color: transparent;
+    -webkit-text-stroke: 2px rgba(246, 210, 138, .09);
+    font-size: clamp(260px, 38vw, 620px);
+    font-weight: 950;
+    line-height: 1;
+    z-index: -1;
+    animation: greekSigil 6s ease-in-out infinite;
+}
+
+.greek-theme .topbar,
+.greek-theme .board-stage,
+.greek-theme .panel,
+.greek-theme .hero-card,
+.greek-theme .form-card,
+.greek-theme .list-card {
+    border-color: rgba(246, 210, 138, .24);
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, .065), rgba(255, 255, 255, .018)),
+        rgba(16, 9, 6, .80);
+    box-shadow:
+        0 28px 84px rgba(0, 0, 0, .55),
+        inset 0 0 0 1px rgba(255, 255, 255, .035);
+    backdrop-filter: blur(18px);
+}
+
+.greek-theme .topbar {
+    overflow: hidden;
+}
+
+.greek-theme .topbar::before,
+.greek-theme .hero-card::before,
+.greek-theme .list-card::before,
+.greek-theme .form-card::before,
+.greek-theme .board-stage::before,
+.greek-theme .panel::before {
+    content: "";
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: linear-gradient(90deg, transparent, rgba(246, 210, 138, .88), rgba(200, 50, 36, .72), transparent);
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: .82;
+}
+
+.greek-theme .hero-card,
+.greek-theme .form-card,
+.greek-theme .list-card,
+.greek-theme .board-stage,
+.greek-theme .panel {
+    position: relative;
+    overflow: hidden;
+}
+
+.greek-theme .hero-card::after,
+.greek-theme .list-card::after {
+    content: "Λ";
+    position: absolute;
+    right: 24px;
+    bottom: -34px;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(246, 210, 138, .14);
+    font-size: clamp(120px, 20vw, 250px);
+    font-weight: 950;
+    line-height: 1;
+    pointer-events: none;
+    animation: greekSigil 5.5s ease-in-out infinite;
+}
+
+.greek-theme .brand-mark,
+.greek-theme .avatar {
+    color: #1a0d06;
+    background:
+        radial-gradient(circle at 30% 24%, rgba(255, 255, 255, .38), transparent 22%),
+        linear-gradient(145deg, #f7d78e, #c88332 54%, #8f1d16);
+    border: 1px solid rgba(246, 210, 138, .38);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .42),
+        0 14px 34px rgba(200, 50, 36, .22),
+        0 0 0 1px rgba(0, 0, 0, .28);
+}
+
+.greek-theme .brand strong,
+.greek-theme h1,
+.greek-theme h2 {
+    text-transform: uppercase;
+    letter-spacing: -.035em;
+    text-shadow: 0 12px 34px rgba(0, 0, 0, .48);
+}
+
+.greek-theme .brand small,
+.greek-theme p,
+.greek-theme .menu-action span,
+.greek-theme .stat-grid span,
+.greek-theme .rules,
+.greek-theme .muted-text,
+.greek-theme .progress-row small {
+    color: rgba(247, 226, 191, .70);
+}
+
+.greek-theme .eyebrow {
+    color: var(--gold-strong);
+    letter-spacing: .28em;
+}
+
+.greek-theme .pill,
+.greek-theme .player-chip {
+    border-color: rgba(246, 210, 138, .22);
+    background: rgba(0, 0, 0, .26);
+    color: rgba(247, 226, 191, .88);
+}
+
+.greek-theme .pill.blanc {
+    background: rgba(241, 220, 192, .16);
+    border-color: rgba(246, 210, 138, .38);
+}
+
+.greek-theme .pill.noir {
+    background: rgba(143, 29, 22, .22);
+    border-color: rgba(200, 50, 36, .36);
+    box-shadow: inset 0 0 0 1px rgba(246, 210, 138, .12);
+}
+
+.greek-theme .btn,
+.greek-theme .icon-btn,
+.greek-theme .menu-action {
+    border-color: rgba(246, 210, 138, .23);
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, .075), rgba(255, 255, 255, .025)),
+        rgba(0, 0, 0, .28);
+    color: var(--text);
+}
+
+.greek-theme .btn.primary {
+    border-color: rgba(246, 210, 138, .62);
+    color: #1d0d06;
+    background: linear-gradient(135deg, #ffe0a0, #d9923d 48%, #a53120 100%);
+    box-shadow:
+        0 18px 46px rgba(143, 29, 22, .32),
+        inset 0 1px 0 rgba(255, 255, 255, .42);
+}
+
+.greek-theme .btn.ghost,
+.greek-theme .btn.subtle {
+    background: rgba(0, 0, 0, .22);
+}
+
+.greek-theme .btn:hover,
+.greek-theme .icon-btn:hover,
+.greek-theme .menu-action:hover {
+    transform: translateY(-2px);
+    border-color: rgba(246, 210, 138, .48);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, .32), 0 0 0 3px rgba(246, 210, 138, .08);
+}
+
+.greek-theme .menu-action {
+    min-height: 116px;
+    position: relative;
+    overflow: hidden;
+}
+
+.greek-theme .menu-action::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(246, 210, 138, .13), transparent);
+    transform: translateX(-120%);
+    transition: transform .55s ease;
+}
+
+.greek-theme .menu-action:hover::before {
+    transform: translateX(120%);
+}
+
+.greek-theme .menu-action strong {
+    color: var(--gold-strong);
+    text-transform: uppercase;
+    letter-spacing: .02em;
+}
+
+.greek-theme .menu-action.danger {
+    border-color: rgba(200, 50, 36, .36);
+}
+
+.greek-theme .field label {
+    color: var(--gold-strong);
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    font-size: .78rem;
+}
+
+.greek-theme .field input,
+.greek-theme .field select {
+    color: var(--text);
+    border-color: rgba(246, 210, 138, .24);
+    background: rgba(0, 0, 0, .28);
+}
+
+.greek-theme .field input:focus,
+.greek-theme .field select:focus {
+    border-color: rgba(246, 210, 138, .70);
+    box-shadow: 0 0 0 4px rgba(246, 210, 138, .10);
+}
+
+.greek-theme .stat-grid > div {
+    border-color: rgba(246, 210, 138, .20);
+    background:
+        radial-gradient(circle at 20% 10%, rgba(246, 210, 138, .12), transparent 30%),
+        rgba(0, 0, 0, .22);
+}
+
+.greek-theme .stat-grid strong {
+    color: var(--gold-strong);
+}
+
+.greek-theme .squadro-board {
+    border-color: rgba(246, 210, 138, .42);
+    background:
+        radial-gradient(circle at 50% 50%, rgba(246, 210, 138, .12), transparent 46%),
+        linear-gradient(135deg, rgba(82, 43, 19, .84), rgba(13, 8, 6, .96));
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .12),
+        inset 0 0 0 6px rgba(0, 0, 0, .18),
+        0 34px 100px rgba(0, 0, 0, .52);
+}
+
+.greek-theme .cell {
+    border-radius: 14px;
+}
+
+.greek-theme .board-cell {
+    border-color: rgba(72, 42, 22, .65);
+}
+
+.greek-theme .battlefield {
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, .20), rgba(80, 48, 28, .10)),
+        repeating-linear-gradient(45deg, rgba(255, 255, 255, .030) 0 8px, rgba(0, 0, 0, .026) 8px 16px),
+        #b6a28a;
+    box-shadow:
+        inset 0 0 0 1px rgba(61, 39, 24, .28),
+        inset 0 14px 28px rgba(255, 255, 255, .08);
+}
+
+.greek-theme .track {
+    background:
+        linear-gradient(135deg, rgba(245, 223, 189, .92), rgba(142, 104, 67, .88)),
+        #d5b98f;
+    border-color: rgba(246, 210, 138, .34);
+}
+
+.greek-theme .rail-space {
+    border-color: rgba(246, 210, 138, .14);
+    background:
+        repeating-linear-gradient(135deg, rgba(246, 210, 138, .08) 0 5px, transparent 5px 11px),
+        rgba(0, 0, 0, .20);
+}
+
+.greek-theme .temple-cell {
+    background:
+        radial-gradient(circle at 50% 50%, rgba(246, 210, 138, .16), transparent 48%),
+        linear-gradient(135deg, rgba(46, 25, 13, .96), rgba(8, 5, 4, .94));
+    border-color: rgba(246, 210, 138, .36);
+}
+
+.greek-theme .temple-mark {
+    color: var(--gold-strong);
+    background: rgba(0, 0, 0, .38);
+    border-color: rgba(246, 210, 138, .36);
+    box-shadow: 0 0 38px rgba(246, 210, 138, .22);
+}
+
+.greek-theme .outer-corner.portal {
+    display: grid;
+    place-items: center;
+    background:
+        radial-gradient(circle at 32% 22%, rgba(255, 255, 255, .22), transparent 20%),
+        linear-gradient(145deg, rgba(246, 210, 138, .80), rgba(200, 131, 50, .72) 45%, rgba(82, 33, 18, .94));
+    border-color: rgba(246, 210, 138, .58);
+    box-shadow:
+        0 0 28px rgba(246, 210, 138, .22),
+        inset 0 0 0 5px rgba(0, 0, 0, .18),
+        inset 0 0 26px rgba(0, 0, 0, .32);
+    animation: greekShieldPulse 3.2s ease-in-out infinite;
+}
+
+.greek-theme .outer-corner.portal::after {
+    content: "Λ";
+    color: #1f0e06;
+    font-size: clamp(1.5rem, 2.8vw, 2.6rem);
+    font-weight: 950;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, .28);
+}
+
+.greek-theme .speed {
+    background:
+        radial-gradient(circle at 35% 20%, rgba(255, 255, 255, .28), transparent 20%),
+        linear-gradient(145deg, #f7d89b, #b56a29 55%, #36170c);
+    border-color: rgba(246, 210, 138, .64);
+    box-shadow:
+        inset 0 -14px 22px rgba(0, 0, 0, .30),
+        0 12px 24px rgba(0, 0, 0, .34);
+}
+
+.greek-theme .speed span {
+    color: var(--gold-strong);
+    background: rgba(9, 5, 4, .90);
+    border: 1px solid rgba(246, 210, 138, .22);
+    text-shadow: 0 0 12px rgba(246, 210, 138, .42);
+}
+
+.greek-theme .piece-button {
+    border: 1px solid rgba(246, 210, 138, .28);
+    box-shadow:
+        0 14px 30px rgba(0, 0, 0, .38),
+        inset 0 1px 0 rgba(255, 255, 255, .32);
+}
+
+.greek-theme .piece-button:not(:disabled):hover {
+    transform: translateY(-5px) scale(1.055) rotate(-1deg);
+    box-shadow:
+        0 22px 44px rgba(0, 0, 0, .48),
+        0 0 0 4px rgba(246, 210, 138, .22),
+        0 0 32px rgba(200, 50, 36, .16);
+}
+
+.greek-theme .piece-blanc {
+    background: linear-gradient(145deg, #fff0d1, #d2a15a);
+    color: #1b0e08;
+}
+
+.greek-theme .piece-noir {
+    background: linear-gradient(145deg, #2a1710, #080504);
+    color: #fff0d1;
+}
+
+.greek-theme .piece-icon {
+    filter: contrast(1.08) saturate(.92);
+}
+
+.greek-theme .piece-meta {
+    background: rgba(9, 5, 4, .82);
+    border: 1px solid rgba(246, 210, 138, .22);
+    color: var(--gold-strong);
+}
+
+.greek-theme .dir-e,
+.greek-theme .dir-o,
+.greek-theme .dir-n,
+.greek-theme .dir-s {
+    border-color: rgba(200, 50, 36, .92);
+}
+
+.greek-theme .selected-cell {
+    box-shadow:
+        inset 0 0 0 4px rgba(246, 210, 138, .84),
+        0 0 34px rgba(246, 210, 138, .32);
+}
+
+.greek-theme .destination-cell,
+.greek-theme .preview-destination {
+    box-shadow:
+        inset 0 0 0 4px rgba(200, 50, 36, .78),
+        0 0 38px rgba(200, 50, 36, .30);
+}
+
+.greek-theme .destination-cell::after,
+.greek-theme .preview-destination::after {
+    border-color: rgba(246, 210, 138, .88);
+}
+
+.greek-theme .action-dock {
+    border-color: rgba(246, 210, 138, .34);
+    background:
+        linear-gradient(135deg, rgba(246, 210, 138, .08), rgba(200, 50, 36, .08)),
+        rgba(0, 0, 0, .32);
+}
+
+.greek-theme .progress-row {
+    border-bottom-color: rgba(246, 210, 138, .12);
+}
+
+.greek-theme .progress-row.white .progress-dot.done {
+    background: #f1dcc0;
+    box-shadow: 0 0 18px rgba(246, 210, 138, .45);
+}
+
+.greek-theme .progress-row.black .progress-dot.done {
+    background: #c83224;
+    box-shadow: 0 0 18px rgba(200, 50, 36, .45);
+}
+
+.greek-theme .history-item {
+    border-bottom-color: rgba(246, 210, 138, .11);
+}
+
+.greek-theme .history-item span,
+.greek-theme .history-item.pinned span {
+    color: var(--gold-strong);
+}
+
+.greek-theme .history-item.pinned {
+    border-color: rgba(246, 210, 138, .24);
+    background: rgba(246, 210, 138, .06);
+}
+
+.greek-theme .alert {
+    border-color: rgba(246, 210, 138, .30);
+    background: rgba(246, 210, 138, .09);
+    color: var(--text);
+}
+
+.greek-theme .alert.success {
+    border-color: rgba(246, 210, 138, .45);
+    background: rgba(200, 131, 50, .14);
+}
+
+.greek-theme .alert.warning {
+    border-color: rgba(246, 210, 138, .42);
+    background: rgba(246, 210, 138, .12);
+}
+
+.greek-theme .alert.danger,
+.greek-theme .panel.critical {
+    border-color: rgba(200, 50, 36, .46);
+    background: rgba(143, 29, 22, .16);
+}
+
+.greek-theme .game-row {
+    border-color: rgba(246, 210, 138, .20);
+    background: rgba(0, 0, 0, .24);
+}
+
+.greek-theme .game-row:hover {
+    border-color: rgba(246, 210, 138, .38);
+    background: rgba(246, 210, 138, .07);
+}
+
+.greek-theme .victory-overlay {
+    background:
+        radial-gradient(circle at 50% 32%, rgba(200, 50, 36, .32), transparent 38%),
+        rgba(0, 0, 0, .72);
+}
+
+.greek-theme .victory-card {
+    border-color: rgba(246, 210, 138, .50);
+    background:
+        radial-gradient(circle at 50% 0%, rgba(246, 210, 138, .20), transparent 44%),
+        linear-gradient(135deg, rgba(53, 23, 12, .96), rgba(8, 5, 4, .96));
+}
+
+.greek-theme .victory-card h1 {
+    color: var(--gold-strong);
+}
+
+.greek-theme.greek-loaded .topbar,
+.greek-theme.greek-loaded .hero-card,
+.greek-theme.greek-loaded .form-card,
+.greek-theme.greek-loaded .list-card,
+.greek-theme.greek-loaded .board-stage,
+.greek-theme.greek-loaded .side-panel .panel {
+    animation: greekRise .75s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.greek-theme.greek-loaded .side-panel:last-child .panel {
+    animation-delay: .08s;
+}
+
+@keyframes greekEmbers {
+    from { transform: translate3d(0, 0, 0) rotate(0deg); }
+    to { transform: translate3d(-110px, -160px, 0) rotate(2deg); }
+}
+
+@keyframes greekSigil {
+    0%, 100% { opacity: .55; transform: translateY(-50%) scale(.985); }
+    50% { opacity: .92; transform: translateY(-50%) scale(1.02); }
+}
+
+@keyframes greekShieldPulse {
+    0%, 100% { filter: saturate(1) brightness(.98); transform: scale(.96); }
+    50% { filter: saturate(1.18) brightness(1.05); transform: scale(1); }
+}
+
+@keyframes greekRise {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 760px) {
+    .greek-theme .game-shell::before {
+        opacity: .36;
+        right: -80px;
+    }
+
+    .greek-theme .menu-action {
+        min-height: auto;
+    }
+}

@@ -34,7 +34,7 @@ final class PieceSquadroUI
     public static function confirmationDeplacement(string $action, string $id, PlateauSquadro $plateau): string
     {
         return self::renderBoard($plateau, App::activeTurnLabel(), false, $_SESSION['position'] ?? null, self::destinationOf($plateau, $_SESSION['position'] ?? null))
-            . '<section class="action-dock visible"><p>Confirmer le déplacement de la pièce ' . App::e($id) . ' ?</p><form action="' . App::e($action) . '" method="post" class="actions-row"><button class="btn primary" name="choix" value="PRESEED">Confirmer</button><button class="btn ghost" name="choix" value="ABORT">Annuler</button></form></section>';
+            . '<section class="action-dock visible"><p>Confirmer le déplacement de la pièce ' . App::e($id) . ' ?</p><form action="' . App::e($action) . '" method="post" class="actions-row"><button class="btn primary" name="choix" value="PRESEED">Sceller</button><button class="btn ghost" name="choix" value="ABORT">Retenir</button></form></section>';
     }
 
     public static function afficher_erreur(string $action, string $id, PlateauSquadro $plateau): string
@@ -46,7 +46,7 @@ final class PieceSquadroUI
 
     public static function afficherVictoire(string $couleur, string $action): string
     {
-        return '<section class="victory-card"><p class="eyebrow">Victoire</p><h1>' . App::e(ucfirst($couleur)) . ' remporte la partie</h1><p>Quatre pièces ont terminé leur aller-retour. La partie est gagnée.</p><form action="' . App::e($action) . '" method="post"><button class="btn primary" name="rejouer" value="1">Nouvelle partie</button></form></section>';
+        return '<section class="victory-card"><p class="eyebrow">Gloire à Sparte</p><h1>' . App::e(ucfirst($couleur)) . ' domine l’arène</h1><p>Quatre champions ont terminé leur marche. La victoire est gravée.</p><form action="' . App::e($action) . '" method="post"><button class="btn primary" name="rejouer" value="1">Nouvelle bataille</button></form></section>';
     }
 
     /**
@@ -66,9 +66,9 @@ final class PieceSquadroUI
         $metrics = self::metrics($plateau);
         $history = App::history();
 
-        $bodyClass = $state === 'Victoire' ? 'app-bg win-mode' : 'app-bg';
+        $bodyClass = $state === 'Victoire' ? 'app-bg greek-theme win-mode' : 'app-bg greek-theme';
 
-        $html = '<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' . App::e($title) . '</title><link rel="stylesheet" href="/assets/css/app.css"><script defer src="/assets/js/app.js"></script></head><body class="' . $bodyClass . '">';
+        $html = '<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' . App::e($title) . '</title><link rel="stylesheet" href="/assets/css/app.css"><link rel="stylesheet" href="/assets/css/greek-theme.css"><script defer src="/assets/js/app.js"></script><script defer src="/assets/js/sparta-effects.js"></script></head><body class="' . $bodyClass . '">';
         $html .= '<main class="game-shell">';
         $html .= self::renderTopbar($player, $mode, $activeColor, $context['playerColor'], $game);
         $html .= self::renderFlashes($context['flashes']);
@@ -83,7 +83,7 @@ final class PieceSquadroUI
         $html .= '</section>';
 
         if ($state === 'Victoire') {
-            $html .= '<section class="victory-overlay"><div class="victory-card"><p class="eyebrow">Fin de partie</p><h1>' . App::e(ucfirst($activeColor)) . ' gagne la manche</h1><p>Le joueur ' . App::e($activeColor) . ' a sorti quatre pièces et verrouille la victoire.</p><form action="traiteActionSquadro.php" method="post" class="actions-row centered"><button class="btn primary" name="rejouer" value="1">Rejouer</button><a class="btn ghost" href="/Vue/choixAction.php">Menu</a></form></div></section>';
+            $html .= '<section class="victory-overlay"><div class="victory-card"><p class="eyebrow">Gloire à Sparte</p><h1>' . App::e(ucfirst($activeColor)) . ' domine l’arène</h1><p>Le camp ' . App::e($activeColor) . ' a ramené quatre étendards hors du plateau. La victoire est gravée.</p><form action="traiteActionSquadro.php" method="post" class="actions-row centered"><button class="btn primary" name="rejouer" value="1">Nouvelle bataille</button><a class="btn ghost" href="/Vue/choixAction.php">Agora</a></form></div></section>';
         }
 
         $html .= '</main></body></html>';
@@ -92,10 +92,10 @@ final class PieceSquadroUI
 
     private static function renderTopbar(?JoueurSquadro $player, string $mode, string $activeColor, ?string $playerColor, ?PartieSquadro $game): string
     {
-        $gameLabel = $game instanceof PartieSquadro ? '#' . $game->getPartieID() : 'Local';
-        $colorBadge = $playerColor ? '<span class="pill muted">Vous jouez ' . App::e($playerColor) . '</span>' : '<span class="pill muted">Duel local</span>';
+        $gameLabel = $game instanceof PartieSquadro ? '#' . $game->getPartieID() : 'Duel';
+        $colorBadge = $playerColor ? '<span class="pill muted">Ton camp : ' . App::e($playerColor) . '</span>' : '<span class="pill muted">Duel d’entraînement</span>';
 
-        return '<header class="topbar"><a class="brand" href="/Vue/choixAction.php"><span class="brand-mark">S</span><span><strong>Squadro</strong><small>Arena tactique</small></span></a><nav class="topbar-nav"><span class="pill">Partie ' . App::e($gameLabel) . '</span><span class="pill ' . App::e($activeColor) . '">Tour ' . App::e($activeColor) . '</span>' . $colorBadge . '</nav><div class="player-chip"><span class="avatar">' . App::e($player?->initials() ?? '?') . '</span><span>' . App::e($player?->getNomJoueur() ?? 'Invité') . '</span></div><form action="traiteActionSquadro.php" method="post" class="top-actions"><button class="icon-btn" name="sync" value="1" title="Synchroniser">↻</button><button class="icon-btn" name="menu" value="1" title="Menu">☰</button></form></header>';
+        return '<header class="topbar"><a class="brand" href="/Vue/choixAction.php"><span class="brand-mark">Λ</span><span><strong>Squadro</strong><small>Arène spartiate</small></span></a><nav class="topbar-nav"><span class="pill">Arène ' . App::e($gameLabel) . '</span><span class="pill ' . App::e($activeColor) . '">Initiative ' . App::e($activeColor) . '</span>' . $colorBadge . '</nav><div class="player-chip"><span class="avatar">' . App::e($player?->initials() ?? '?') . '</span><span>' . App::e($player?->getNomJoueur() ?? 'Invité') . '</span></div><form action="traiteActionSquadro.php" method="post" class="top-actions"><button class="icon-btn" name="sync" value="1" title="Rafraîchir l’arène">↻</button><button class="icon-btn" name="menu" value="1" title="Agora">☰</button></form></header>';
     }
 
     private static function renderFlashes(array $flashes): string
@@ -116,39 +116,39 @@ final class PieceSquadroUI
     private static function renderBoardHeader(string $state, string $activeColor, bool $allowMoves, ?array $selected, ?array $destination): string
     {
         $headline = match ($state) {
-            'ConfirmationPiece' => 'Confirme le déplacement',
-            'erreur' => 'Action refusée',
-            'Victoire' => 'Partie terminée',
-            default => $allowMoves ? 'Choisis une pièce ' . $activeColor : 'En attente du joueur ' . $activeColor,
+            'ConfirmationPiece' => 'Valide ton ordre',
+            'erreur' => 'Ordre refusé',
+            'Victoire' => 'Victoire gravée',
+            default => $allowMoves ? 'Choisis ton champion ' . $activeColor : 'En attente du camp ' . $activeColor,
         };
 
-        $sub = 'Survole une pièce pour prévisualiser sa destination. Les pièces adverses croisées sont renvoyées à leur départ.';
+        $sub = 'Survole un champion pour lire sa trajectoire. Tout adversaire croisé est repoussé jusqu’à son point de départ.';
         if ($selected && $destination) {
-            $sub = 'Pièce sélectionnée : [' . $selected[0] . ',' . $selected[1] . '] → destination [' . $destination[0] . ',' . $destination[1] . '].';
+            $sub = 'Champion choisi : [' . $selected[0] . ',' . $selected[1] . '] → destination [' . $destination[0] . ',' . $destination[1] . '].';
         }
 
-        return '<div class="board-header"><div><p class="eyebrow">Plateau 7×7</p><h1>' . App::e($headline) . '</h1><p>' . App::e($sub) . '</p></div><form action="traiteActionSquadro.php" method="post" class="actions-row"><button class="btn subtle" name="undo" value="1">Annuler coup</button><button class="btn subtle" name="rejouer" value="1">Reset</button></form></div>';
+        return '<div class="board-header"><div><p class="eyebrow">Champ de bataille</p><h1>' . App::e($headline) . '</h1><p>' . App::e($sub) . '</p></div><form action="traiteActionSquadro.php" method="post" class="actions-row"><button class="btn subtle" name="undo" value="1">Replier</button><button class="btn subtle" name="rejouer" value="1">Réinitialiser</button></form></div>';
     }
 
     private static function renderLeftPanel(array $metrics, string $activeColor, string $mode, ?PartieSquadro $game): string
     {
         $status = $game?->getGameStatus() ?? 'local';
         $moveCount = $game?->getMoveCount() ?? count(App::history());
-        return '<aside class="side-panel"><section class="panel"><p class="eyebrow">Objectif</p><h2>Sortir 4 pièces</h2><p>Chaque pièce traverse le plateau, revient dans l’autre sens, puis sort. La première couleur qui sort quatre pièces gagne.</p><div class="stat-grid"><div><strong>' . App::e($metrics['whiteDone']) . '/4</strong><span>Blanc</span></div><div><strong>' . App::e($metrics['blackDone']) . '/4</strong><span>Noir</span></div><div><strong>' . App::e($moveCount) . '</strong><span>Coups</span></div><div><strong>' . App::e($status) . '</strong><span>Statut</span></div></div></section><section class="panel"><p class="eyebrow">Règles rapides</p><ul class="rules"><li>Blanc se déplace horizontalement.</li><li>Noir se déplace verticalement.</li><li>Les vitesses sont indiquées sur les rails.</li><li>Une pièce croisée retourne à sa case de départ.</li></ul></section></aside>';
+        return '<aside class="side-panel"><section class="panel"><p class="eyebrow">Mission</p><h2>Sortir 4 étendards</h2><p>Chaque champion traverse l’arène, revient sous la pression ennemie, puis sort du champ. Le premier camp qui sort quatre champions impose sa loi.</p><div class="stat-grid"><div><strong>' . App::e($metrics['whiteDone']) . '/4</strong><span>Blanc</span></div><div><strong>' . App::e($metrics['blackDone']) . '/4</strong><span>Noir</span></div><div><strong>' . App::e($moveCount) . '</strong><span>Ordres</span></div><div><strong>' . App::e($status) . '</strong><span>État</span></div></div></section><section class="panel"><p class="eyebrow">Code de l’arène</p><ul class="rules"><li>Les blancs percent les lignes horizontales.</li><li>Les noirs écrasent les colonnes verticales.</li><li>Les plaques de bronze indiquent la puissance de marche.</li><li>Un champion croisé est repoussé à son départ.</li></ul></section></aside>';
     }
 
     private static function renderRightPanel(array $history, array $metrics, ?PartieSquadro $game): string
     {
         $lastMove = $game?->getLastMove();
-        $html = '<aside class="side-panel"><section class="panel"><p class="eyebrow">Progression</p>';
+        $html = '<aside class="side-panel"><section class="panel"><p class="eyebrow">Étendards sortis</p>';
         $html .= self::progressRow('Blanc', $metrics['whiteDone'], 'white');
         $html .= self::progressRow('Noir', $metrics['blackDone'], 'black');
-        $html .= '</section><section class="panel history"><p class="eyebrow">Historique</p>';
+        $html .= '</section><section class="panel history"><p class="eyebrow">Chronique du duel</p>';
         if ($lastMove) {
-            $html .= '<div class="history-item pinned"><span>DB</span><p>' . App::e($lastMove) . '</p></div>';
+            $html .= '<div class="history-item pinned"><span>Dernier</span><p>' . App::e($lastMove) . '</p></div>';
         }
         if ($history === []) {
-            $html .= '<p class="muted-text">Aucun coup enregistré dans cette session.</p>';
+            $html .= '<p class="muted-text">Aucun ordre gravé pour l’instant.</p>';
         } else {
             foreach ($history as $item) {
                 $html .= '<div class="history-item"><span>' . App::e($item['at'] ?? '') . '</span><p>' . App::e($item['message'] ?? '') . '</p></div>';
@@ -164,7 +164,7 @@ final class PieceSquadroUI
         for ($i = 1; $i <= 4; $i++) {
             $items .= '<span class="progress-dot ' . ($i <= $done ? 'done' : '') . '"></span>';
         }
-        return '<div class="progress-row ' . App::e($theme) . '"><div><strong>' . App::e($label) . '</strong><small>' . $done . '/4 sorties</small></div><div class="progress-dots">' . $items . '</div></div>';
+        return '<div class="progress-row ' . App::e($theme) . '"><div><strong>' . App::e($label) . '</strong><small>' . $done . '/4 hors de l’arène</small></div><div class="progress-dots">' . $items . '</div></div>';
     }
 
     private static function renderActionDock(string $state, ?array $selected, ?array $destination): string
@@ -174,7 +174,7 @@ final class PieceSquadroUI
         }
 
         $destinationLabel = $destination ? '[' . $destination[0] . ',' . $destination[1] . ']' : 'inconnue';
-        return '<section class="action-dock visible"><div><strong>Valider le coup ?</strong><p>[' . App::e($selected[0]) . ',' . App::e($selected[1]) . '] ira vers ' . App::e($destinationLabel) . '.</p></div><form action="traiteActionSquadro.php" method="post" class="actions-row"><button class="btn primary" name="choix" value="PRESEED">Confirmer</button><button class="btn ghost" name="choix" value="ABORT">Annuler</button></form></section>';
+        return '<section class="action-dock visible"><div><strong>Sceller cet ordre ?</strong><p>[' . App::e($selected[0]) . ',' . App::e($selected[1]) . '] marchera vers ' . App::e($destinationLabel) . '.</p></div><form action="traiteActionSquadro.php" method="post" class="actions-row"><button class="btn primary" name="choix" value="PRESEED">Sceller</button><button class="btn ghost" name="choix" value="ABORT">Retenir</button></form></section>';
     }
 
     private static function renderBoard(PlateauSquadro $plateau, string $activeColor, bool $allowMoves, ?array $selected, ?array $destination): string
@@ -237,7 +237,7 @@ final class PieceSquadroUI
         $content = '';
         if ($piece->getCouleur() === PieceSquadro::NEUTRE) {
             $classes[] = 'temple-cell';
-            $content = '<span class="temple-mark">◆</span>';
+            $content = '<span class="temple-mark">Λ</span>';
         } elseif ($piece->getCouleur() === PieceSquadro::BLANC || $piece->getCouleur() === PieceSquadro::NOIR) {
             $content = self::pieceButton($plateau, $piece, $x, $y, $activeColor, $allowMoves);
         }

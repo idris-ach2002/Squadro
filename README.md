@@ -22,6 +22,21 @@ Mot de passe : password
 Base : squadro_db
 ```
 
+
+## Version thème spartiate / grec
+
+Cette version applique un template grec à l’ensemble du jeu : page d’entrée, agora, arènes ouvertes, campagnes, plateau, panneaux latéraux, boutons, alertes, rails, pièces, destination prévisualisée et écran de victoire.
+
+Fichiers principaux du thème :
+
+```text
+assets/css/sparta-home.css   Page d’entrée cinématique
+assets/css/greek-theme.css   Thème global du lobby et du plateau
+assets/js/sparta-effects.js  Micro-interactions et entrée animée
+```
+
+Le thème reste séparé du socle applicatif : `app.css` conserve les composants génériques, tandis que `greek-theme.css` surcharge uniquement l’identité visuelle. Cela permet de changer de skin plus tard sans casser le rendu fonctionnel du plateau.
+
 ## Modes de jeu
 
 ### Duel local instantané
@@ -44,7 +59,7 @@ Le joueur créateur prend les blancs. La partie est enregistrée dans PostgreSQL
 - overlay de victoire ;
 - panneaux latéraux : règles rapides, progression, historique, statistiques de partie ;
 - badges de tour, mode, joueur et couleur ;
-- lobby moderne : duel local, création en ligne, rejoindre une table, parties en cours ;
+- agora moderne : duel local, création d’arène, rejoindre un duel, reprendre une campagne ;
 - feedback utilisateur par flash messages ;
 - raccourcis clavier simples : `M` pour menu, `U` pour annuler le dernier coup de session.
 
@@ -97,7 +112,10 @@ SQL/
   squadro.sql          Schéma PostgreSQL idempotent
 assets/
   css/app.css          Design system et plateau
+  css/sparta-home.css  Page d’accueil spartiate
+  css/greek-theme.css  Skin grec global du jeu
   js/app.js            Prévisualisation destination / raccourcis
+  js/sparta-effects.js Micro-interactions visuelles
 ```
 
 ## Vérifications locales hors Docker

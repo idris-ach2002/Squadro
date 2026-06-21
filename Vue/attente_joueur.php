@@ -22,5 +22,5 @@ $_SESSION[App::SESSION_HISTORY] = [];
 $_SESSION[App::SESSION_UNDO] = [];
 unset($_SESSION['position']);
 
-App::flash('success', 'Partie #' . $gameId . ' créée. Vous jouez les blancs.');
+App::flash('success', 'Arène #' . $gameId . ' ouverte. Tu prends les blancs.');
 App::redirect('/Controlleur/index_squadro.php');

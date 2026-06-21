@@ -58,14 +58,14 @@ function ensureColorPlayable(string $color): bool
 {
     $active = App::activeTurnLabel();
     if ($color !== $active) {
-        App::flash('warning', 'Ce n’est pas le tour des pièces ' . $color . '.');
+        App::flash('warning', 'Ce n’est pas l’initiative du camp ' . $color . '.');
         return false;
     }
 
     if (($_SESSION[App::SESSION_MODE] ?? 'local') === 'online') {
         $playerColor = $_SESSION[App::SESSION_PLAYER_COLOR] ?? null;
         if (is_string($playerColor) && $playerColor !== $active) {
-            App::flash('warning', 'En mode en ligne, vous devez attendre le tour de votre couleur.');
+            App::flash('warning', 'Dans l’arène en ligne, attends l’initiative de ton camp.');
             return false;
         }
     }
@@ -83,7 +83,7 @@ function selectPiece(string $color): void
     $position = parsePositionFromRequest($color);
     if ($position === null) {
         $_SESSION[App::SESSION_STATE] = 'erreur';
-        App::flash('danger', 'Position de pièce invalide.');
+        App::flash('danger', 'Position de champion invalide.');
         App::redirect('/Controlleur/index_squadro.php');
     }
 
@@ -101,7 +101,7 @@ function confirmMove(): void
 
     if (!is_array($position) || count($position) < 2) {
         $_SESSION[App::SESSION_STATE] = 'erreur';
-        App::flash('danger', 'Aucune pièce n’était sélectionnée.');
+        App::flash('danger', 'Aucun champion n’était sélectionné.');
         return;
     }
 
@@ -114,7 +114,7 @@ function confirmMove(): void
     $action = new ActionSquadro($plateau);
     if (!$action->jouePiece($x, $y)) {
         $_SESSION[App::SESSION_STATE] = 'erreur';
-        App::flash('danger', 'Déplacement impossible : cette pièce ne peut pas être jouée.');
+        App::flash('danger', 'Ordre impossible : ce champion ne peut pas avancer.');
         return;
     }
 
@@ -145,21 +145,21 @@ if (isset($_POST['menu'])) {
 }
 
 if (isset($_POST['sync'])) {
-    App::flash('success', 'Synchronisation effectuée.');
+    App::flash('success', 'L’arène a été rafraîchie.');
     App::redirect('/Controlleur/index_squadro.php');
 }
 
 if (isset($_POST['undo'])) {
     $state = App::popUndo();
     if ($state === null) {
-        App::flash('warning', 'Aucun coup à annuler dans cette session.');
+        App::flash('warning', 'Aucun ordre à replier dans cette session.');
     } else {
         $_SESSION[App::SESSION_BOARD] = PlateauSquadro::fromJson((string) $state['plateau']);
         $_SESSION[App::SESSION_TURN] = (string) $state['turn'];
         $_SESSION[App::SESSION_STATE] = 'choixPiece';
         unset($_SESSION['position']);
-        App::addHistory('Annulation : retour au tour ' . $_SESSION[App::SESSION_TURN]);
-        syncGameToDatabase(null, 'Annulation locale');
+        App::addHistory('Repli tactique : retour à l’initiative ' . $_SESSION[App::SESSION_TURN]);
+        syncGameToDatabase(null, 'Repli tactique local');
     }
     App::redirect('/Controlleur/index_squadro.php');
 }
@@ -174,7 +174,7 @@ if (isset($_POST['rejouer']) || isset($_GET['rejouer'])) {
     $_SESSION[App::SESSION_STATE] = 'choixPiece';
     $_SESSION[App::SESSION_TURN] = 'blanc';
     $_SESSION[App::SESSION_MODE] = 'local';
-    App::flash('success', 'Nouvelle partie locale initialisée.');
+    App::flash('success', 'Nouvelle bataille d’entraînement lancée.');
     App::redirect('/Controlleur/index_squadro.php');
 }
 
