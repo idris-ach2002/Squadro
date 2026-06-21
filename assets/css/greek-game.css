@@ -573,3 +573,29 @@ form.is-loading button[name="oracle"] {
     50% { transform: translateY(-8px) scale(1.08); }
     100% { transform: translateY(0) scale(.98); }
 }
+
+/* Stabilisation stricte du plateau : aucun coup ne doit provoquer de saut vertical. */
+html.squadro-no-smooth-scroll,
+html.squadro-no-smooth-scroll * {
+    scroll-behavior: auto !important;
+}
+
+.board-stage {
+    scroll-margin-top: 18px;
+}
+
+.board-stage.is-transition-locked,
+.board-stage.is-transition-locked * {
+    animation-play-state: paused !important;
+    transition: none !important;
+}
+
+.board-header {
+    min-height: 92px;
+}
+
+@media (max-width: 760px) {
+    .board-header {
+        min-height: 126px;
+    }
+}

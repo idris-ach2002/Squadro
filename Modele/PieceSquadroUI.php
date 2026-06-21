@@ -258,7 +258,7 @@ final class PieceSquadroUI
         }
 
         $destinationLabel = $destination ? '[' . $destination[0] . ',' . $destination[1] . ']' : 'inconnue';
-        return '<section class="action-dock visible"><div><strong>Valider le coup ?</strong><p>[' . App::e($selected[0]) . ',' . App::e($selected[1]) . '] ira vers ' . App::e($destinationLabel) . '.</p></div><form action="traiteActionSquadro.php" method="post" class="actions-row"><button class="btn primary" name="choix" value="PRESEED" autofocus>Confirmer</button><button class="btn ghost" name="choix" value="ABORT">Annuler</button></form></section>';
+        return '<section class="action-dock visible"><div><strong>Valider le coup ?</strong><p>[' . App::e($selected[0]) . ',' . App::e($selected[1]) . '] ira vers ' . App::e($destinationLabel) . '.</p></div><form action="traiteActionSquadro.php" method="post" class="actions-row"><button class="btn primary" name="choix" value="PRESEED">Confirmer</button><button class="btn ghost" name="choix" value="ABORT">Annuler</button></form></section>';
     }
 
     /** @param array<string,mixed> $settings @param ?array<string,mixed> $bestMove */

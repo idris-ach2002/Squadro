@@ -59,3 +59,16 @@ SQL/squadro.sql                   Schéma PostgreSQL
 find . -path './.git' -prune -o -name '*.php' -print0 | xargs -0 -n1 php -l
 php tests/smoke.php
 ```
+
+## Correction v6 — plateau stable
+
+La v6 ajoute une stabilisation stricte du plateau pendant les actions de jeu :
+
+- suppression de l'`autofocus` sur la confirmation ;
+- désactivation de la restauration automatique de scroll du navigateur sur l'écran de jeu ;
+- conservation de la position visuelle du plateau avant/après un coup ;
+- soumission AJAX des commandes de jeu courantes pour éviter les rechargements complets ;
+- confirmation toujours fixe, sans déplacement forcé de la page ;
+- suppression du `scrollIntoView` de repli sur le mode plein écran.
+
+Le résultat attendu : le plateau reste exactement à la même hauteur dans le viewport après un déplacement, une confirmation, un Oracle ou une annulation.
