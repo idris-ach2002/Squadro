@@ -139,7 +139,7 @@ class PieceSquadroUI
     {
         return '
                 body {
-                    background-image: url("Logo/valhalla.jpg");
+                    background-image: url("/Logo/valhalla.jpg");
                     background-position: cover;
                     background-repeat: repeat;
                     display: flex;
@@ -241,7 +241,7 @@ class PieceSquadroUI
                     distort 0.7s infinite alternate ease-in-out;
             box-shadow: 0 0 40px #ff4500, 0 0 80px #ff0000, 0 0 120px rgba(255, 69, 0, 1);
             transition: transform 0.15s ease-in-out, filter 0.15s;
-            background-image: url("Logo/dragon1.jpg");
+            background-image: url("/Logo/dragon1.jpg");
             background-size: 100px 100px; /* Définit une largeur et hauteur spécifiques */
             background-position: center;
             background-repeat: no-repeat;
@@ -340,7 +340,7 @@ class PieceSquadroUI
         return '
               #btn0-0,#btn6-0,#btn0-6,#btn6-6 {
                 cursor: not-allowed;
-                background-image: url("Logo/samurai3.jpeg");
+                background-image: url("/Logo/samurai3.jpeg");
                 background-size: 100px 100px; /* Définit une largeur et hauteur spécifiques */
                 background-position: center;
                 background-repeat: no-repeat;
@@ -814,7 +814,7 @@ class PieceSquadroUI
                     
 
                 button.white {
-                    background-image: url("Logo/femmeGrec.png");
+                    background-image: url("/Logo/femmeGrec.png");
                     background-size: 100px 100px; /* Définit une largeur et hauteur spécifiques */
                     background-position: center;
                     background-repeat: no-repeat;
@@ -822,7 +822,7 @@ class PieceSquadroUI
                 }
 
                 button.black {
-                    background-image: url("Logo/guerrier.jpg");
+                    background-image: url("/Logo/guerrier.jpg");
                     background-size: 100px 100px; /* Définit une largeur et hauteur spécifiques */
                     background-position: center;
                     background-repeat: no-repeat;

@@ -194,5 +194,3 @@ class PieceSquadro {
     // // foreach($pieceJson as $pJson) {
     // //    print(PieceSquadro::fromJson($pJson) ."<br/>");
     // // };
-?>
-

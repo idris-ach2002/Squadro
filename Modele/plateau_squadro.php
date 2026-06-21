@@ -169,8 +169,16 @@ class PlateauSquadro {
      * @throws \RuntimeException Si une erreur survient lors de l'encodage JSON.
      */
     public function toJson(): string {
+        $plateau = array_map(
+            fn(array $ligne) => array_map(
+                fn(PieceSquadro $piece) => json_decode($piece->toJson(), true),
+                $ligne
+            ),
+            $this->plateau
+        );
+
         $json = json_encode([
-            'plateau' => $this->plateau,
+            'plateau' => $plateau,
             'lignesJouables' => $this->lignesJouables,
             'colonnesJouables' => $this->colonnesJouables
         ]);
@@ -196,10 +204,20 @@ class PlateauSquadro {
             throw new \InvalidArgumentException('Erreur lors du décodage JSON : ' . json_last_error_msg());
         }
 
+        if (!isset($data['plateau'], $data['lignesJouables'], $data['colonnesJouables'])) {
+            throw new \InvalidArgumentException('Données JSON invalides pour recréer un PlateauSquadro');
+        }
+
         $plateauSquadro = new self();
-        $plateauSquadro->plateau = $data['plateau'];
-        $plateauSquadro->lignesJouables = $data['lignesJouables'];
-        $plateauSquadro->colonnesJouables = $data['colonnesJouables'];
+        $plateauSquadro->plateau = array_map(
+            fn(array $ligne) => array_map(
+                fn(array $piece) => PieceSquadro::fromJson(json_encode($piece)),
+                $ligne
+            ),
+            $data['plateau']
+        );
+        $plateauSquadro->lignesJouables = array_values($data['lignesJouables']);
+        $plateauSquadro->colonnesJouables = array_values($data['colonnesJouables']);
 
         return $plateauSquadro;
     }
@@ -338,5 +356,3 @@ class PlateauSquadro {
     }
 
     //testUnitairePlateau();
-?>
-

@@ -1,37 +1,24 @@
 <?php
 session_start();
 
-require_once '../Modele/plateau_squadro.php';
-require_once '../skel/PDOSquadro.skel.php';
-require_once '../env/db.php';
+if (!isset($_SESSION['joueur'])) {
+    header('Location: login.php');
+    header('HTTP/1.1 303 See Other');
+    exit;
+}
 
-//génrération d'un plateau;
+require_once __DIR__ . '/../Modele/plateau_squadro.php';
+require_once __DIR__ . '/../skel/PDOSquadro.skel.php';
+require_once __DIR__ . '/../env/db.php';
+
 $plateau = new PlateauSquadro();
+$_SESSION['plateau'] = $plateau;
+$_SESSION['etat'] = 'choixPiece';
+$_SESSION['couleur'] = 'blanc';
 
-
-//stocker le plateau dans une variable de session
-if(!isset($_SESSION["plateau"]))
-    $_SESSION["plateau"] = $plateau;
-
-
-print_r($_SESSION['joueur']);
-
-PDOSquadro::initPDO(getenv('sgbd'),getenv('host'),getenv('database'),getenv('user'),getenv('password'));
+PDOSquadro::initPDO(getenv('sgbd'), getenv('host'), getenv('database'), getenv('user'), getenv('password'));
 PDOSquadro::creerPartieSquadro($_SESSION['joueur'], $plateau->toJson());
 
-
-
-header("Location: ../Controlleur/index_squadro.php"); // Redirige vers l'accueil ou la page de connexion
+header('Location: ../Controlleur/index_squadro.php');
 header('HTTP/1.1 303 See Other');
-?>
-
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Attente d'un Nouveau Joueur</title>
-</head>
-<body>
-    <h1>En attente d'un second joueur ...</h1>
-</body>
-</html>
+exit;

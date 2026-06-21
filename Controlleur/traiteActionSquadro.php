@@ -1,114 +1,124 @@
 <?php
-require_once 'action_squadro.php';
-
+require_once __DIR__ . '/../Modele/action_squadro.php';
 
 session_start();
 
-
-function login() {
-    if (!isset($_SESSION["login"]))
-    {
+function verifierConnexion(): void
+{
+    if (!isset($_SESSION['joueur'])) {
         header('Location: ../Vue/login.php');
         header('HTTP/1.1 303 See Other');
-    }
-    else
-    {
-        print("Données");
+        exit;
     }
 }
 
-
-function traiterChoix(string $couleur)
+function traiterChoix(string $couleur): void
 {
-    //stocker la position de la pièce dans un tableau [abcisse, ordonnée] (btn$x-$y) -> ["", "$x-$y"] -> [$x,$y]
-    $_SESSION["position"] = explode("-", explode("btn", $_REQUEST[$couleur])[1]);
-    //stocker le joueur courant
-    $_SESSION["couleur"] = $couleur;
-    $_SESSION["etat"] = "ConfirmationPiece";
+    $_SESSION['position'] = explode('-', explode('btn', $_REQUEST[$couleur])[1]);
+    $_SESSION['couleur'] = $couleur;
+    $_SESSION['etat'] = 'ConfirmationPiece';
 }
 
-function traiterAnnulation()
+function traiterAnnulation(): void
 {
-    $_SESSION["position"] = "";
-    $_SESSION["etat"] = "choixPiece";
+    unset($_SESSION['position']);
+    $_SESSION['etat'] = 'choixPiece';
 }
 
-function traiterErreur()
+function traiterErreur(): void
 {
-    $_SESSION["position"] = "";
-    $_SESSION["etat"] = "choixPiece";
+    unset($_SESSION['position']);
+    $_SESSION['etat'] = 'choixPiece';
 }
 
-function rejouer() : void {
-    $_SESSION = []; //il suffit juste d'oublier la session tout est fais dans index
+function rejouer(): void
+{
+    $_SESSION = [];
 }
 
-
-function traiterConfiramtion(string $couleur)
+function traiterConfirmation(string $couleur): void
 {
-    echo "<h1>X" . $_SESSION["position"][0] . ", Y" . $_SESSION["position"][1] . "</h1>";
-    echo $_SESSION["plateau"]->__toString();
     $couleurInt = $couleur === 'blanc' ? PieceSquadro::BLANC : PieceSquadro::NOIR;
 
-    if (isset($_SESSION["plateau"])) {
-        if (isset($_SESSION["position"])) {
-            $bouger = new ActionSquadro($_SESSION["plateau"]);
-            if($bouger->jouePiece($_SESSION["position"][0], $_SESSION["position"][1]))
-                unset($_SESSION["position"]);
-            else{
-                $_SESSION["etat"] = "erreur";
-                return;
-            }
-            if ($bouger->remporteVictoire($couleurInt))
-                $_SESSION["etat"] = "Victoire";
-            else {
-                $_SESSION["couleur"] = $couleur === 'blanc' ? 'noir' : 'blanc';
-                $_SESSION["etat"] = "choixPiece";
-            }
-        } else {
-            echo "position de la pièce à faire bouger non sauvgardé impossible de faire les déplacements<br/>";
-            exit(1);
-        }
-    } else {
-        echo "plateau non sauvgardé impossible de faire les déplacements<br/>";
-        exit(1);
+    if (!isset($_SESSION['plateau'])) {
+        $_SESSION['plateau'] = new PlateauSquadro();
     }
-}
 
-
-if ($_SESSION["etat"] == "login") {
-    $_SESSION["etat"] = "choixPiece";
-    $_SESSION["couleur"] = "blanc";
-    login();
-}
-
-
-if (isset($_REQUEST["blanc"])) {
-    traiterChoix("blanc");
-    header('Location: index_squadro.php');
-} else if (isset($_REQUEST["noir"])) {
-    traiterChoix("noir");
-    header('Location: index_squadro.php');
-}
-
-
-if(isset($_REQUEST["choix"])) {
-    switch ($_REQUEST["choix"]) {
-        case "PRESEED": traiterConfiramtion($_SESSION["couleur"]); break;
-        case "ABORT": traiterAnnulation(); break;
+    if (!isset($_SESSION['position'])) {
+        $_SESSION['etat'] = 'erreur';
+        return;
     }
-    header('Location: index_squadro.php');
+
+    $action = new ActionSquadro($_SESSION['plateau']);
+    if (!$action->jouePiece((int) $_SESSION['position'][0], (int) $_SESSION['position'][1])) {
+        $_SESSION['etat'] = 'erreur';
+        return;
+    }
+
+    unset($_SESSION['position']);
+
+    if ($action->remporteVictoire($couleurInt)) {
+        $_SESSION['etat'] = 'Victoire';
+        return;
+    }
+
+    $_SESSION['couleur'] = $couleur === 'blanc' ? 'noir' : 'blanc';
+    $_SESSION['etat'] = 'choixPiece';
 }
 
+if (!isset($_SESSION['etat'])) {
+    $_SESSION['etat'] = 'login';
+}
 
+if ($_SESSION['etat'] === 'login') {
+    $_SESSION['etat'] = 'choixPiece';
+    $_SESSION['couleur'] = 'blanc';
+    verifierConnexion();
+}
 
-if(isset($_REQUEST["rejouer"])) {
+if (isset($_REQUEST['blanc'])) {
+    traiterChoix('blanc');
+    header('Location: index_squadro.php');
+    header('HTTP/1.1 303 See Other');
+    exit;
+}
+
+if (isset($_REQUEST['noir'])) {
+    traiterChoix('noir');
+    header('Location: index_squadro.php');
+    header('HTTP/1.1 303 See Other');
+    exit;
+}
+
+if (isset($_REQUEST['choix'])) {
+    switch ($_REQUEST['choix']) {
+        case 'PRESEED':
+            traiterConfirmation($_SESSION['couleur'] ?? 'blanc');
+            break;
+        case 'ABORT':
+            traiterAnnulation();
+            break;
+    }
+
+    header('Location: index_squadro.php');
+    header('HTTP/1.1 303 See Other');
+    exit;
+}
+
+if (isset($_REQUEST['rejouer'])) {
     rejouer();
-    header('Location: index_squadro.php');
+    header('Location: ../index.php');
+    header('HTTP/1.1 303 See Other');
+    exit;
 }
 
-if(isset($_REQUEST['erreur'])) {
+if (isset($_REQUEST['erreur'])) {
     traiterErreur();
-    header('Location: index.php');
+    header('Location: index_squadro.php');
+    header('HTTP/1.1 303 See Other');
+    exit;
 }
 
+header('Location: index_squadro.php');
+header('HTTP/1.1 303 See Other');
+exit;

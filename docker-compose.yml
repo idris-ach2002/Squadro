@@ -1,0 +1,46 @@
+services:
+  app:
+    build: .
+    container_name: squadro_app
+    ports:
+      - "8080:80"
+    environment:
+      sgbd: pgsql
+      host: db
+      database: squadro_db
+      user: squadro_user
+      password: password
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    container_name: squadro_db
+    environment:
+      POSTGRES_DB: squadro_db
+      POSTGRES_USER: squadro_user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./SQL/squadro.sql:/docker-entrypoint-initdb.d/01-squadro.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U squadro_user -d squadro_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  adminer:
+    image: adminer:latest
+    container_name: squadro_adminer
+    ports:
+      - "8081:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

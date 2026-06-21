@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../Modele/joueurSquadro.php';
+require_once __DIR__ . '/../Modele/plateau_squadro.php';
 require_once __DIR__ . '/../Modele/partieSquadro.php';
 
 class PDOSquadro
@@ -18,7 +19,7 @@ class PDOSquadro
         }
 
         self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        self::initTable('../SQL/squadro.sql');
+        self::initTable(__DIR__ . '/../SQL/squadro.sql');
         self::initPrepare();
     }
 
@@ -110,6 +111,10 @@ class PDOSquadro
 
     public static function addPlayerToPartieSquadro(string $playerName, string $json, int $gameId): void
     {
+        if (json_decode($playerName, true) !== null) {
+            $playerName = JoueurSquadro::fromJson($playerName)->getNomJoueur();
+        }
+
         self::$addPlayerToPartieSquadro->execute([
             'playerName' => $playerName,
             'json' => $json,
@@ -136,9 +141,6 @@ class PDOSquadro
         $partie->setPartieID((int)$row['partieid']);
         $partie->setPartieStatus($row['gamestatus']);
         $partie->setPlateau(PlateauSquadro::fromJson($row['json']));
-
-
-        print($partie->toJson());
 
 
         return $partie;
