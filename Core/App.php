@@ -13,6 +13,8 @@ final class App
     public const SESSION_PLAYER_COLOR = 'playerColor';
     public const SESSION_HISTORY = 'history';
     public const SESSION_UNDO = 'undoStack';
+    public const SESSION_SETTINGS = 'gameSettings';
+    public const SESSION_STATS = 'gameStats';
 
     public static function boot(): void
     {
@@ -161,7 +163,7 @@ final class App
             'at' => date('H:i:s'),
         ]);
 
-        $_SESSION[self::SESSION_HISTORY] = array_slice($history, 0, 12);
+        $_SESSION[self::SESSION_HISTORY] = array_slice($history, 0, 24);
     }
 
     /** @return array<int,array{message:string,at:string}> */
@@ -169,6 +171,137 @@ final class App
     {
         $history = $_SESSION[self::SESSION_HISTORY] ?? [];
         return is_array($history) ? $history : [];
+    }
+
+
+    /** @return array{moveFlow:string,assist:bool,bot:bool,botColor:string,showCoordinates:bool,cinematic:bool} */
+    public static function settings(): array
+    {
+        $defaults = [
+            'moveFlow' => 'instant',
+            'assist' => true,
+            'bot' => false,
+            'botColor' => 'noir',
+            'showCoordinates' => true,
+            'cinematic' => true,
+        ];
+
+        $settings = $_SESSION[self::SESSION_SETTINGS] ?? [];
+        if (!is_array($settings)) {
+            $settings = [];
+        }
+
+        $merged = array_merge($defaults, $settings);
+        $merged['moveFlow'] = $merged['moveFlow'] === 'confirm' ? 'confirm' : 'instant';
+        $merged['botColor'] = $merged['botColor'] === 'blanc' ? 'blanc' : 'noir';
+        $merged['assist'] = (bool) $merged['assist'];
+        $merged['bot'] = (bool) $merged['bot'];
+        $merged['showCoordinates'] = (bool) $merged['showCoordinates'];
+        $merged['cinematic'] = (bool) $merged['cinematic'];
+
+        $_SESSION[self::SESSION_SETTINGS] = $merged;
+        return $merged;
+    }
+
+    /** @param array<string,mixed> $input */
+    public static function updateSettings(array $input): void
+    {
+        $settings = self::settings();
+        $settings['moveFlow'] = ($input['moveFlow'] ?? 'instant') === 'confirm' ? 'confirm' : 'instant';
+        $settings['assist'] = isset($input['assist']);
+        $settings['showCoordinates'] = isset($input['showCoordinates']);
+        $settings['cinematic'] = isset($input['cinematic']);
+
+        if (isset($input['bot'])) {
+            $settings['bot'] = true;
+            $settings['botColor'] = ($input['botColor'] ?? 'noir') === 'blanc' ? 'blanc' : 'noir';
+        } else {
+            $settings['bot'] = false;
+        }
+
+        $_SESSION[self::SESSION_SETTINGS] = $settings;
+    }
+
+    public static function enableBot(string $botColor = 'noir'): void
+    {
+        $settings = self::settings();
+        $settings['bot'] = true;
+        $settings['botColor'] = $botColor === 'blanc' ? 'blanc' : 'noir';
+        $settings['moveFlow'] = 'instant';
+        $_SESSION[self::SESSION_SETTINGS] = $settings;
+    }
+
+    public static function disableBot(): void
+    {
+        $settings = self::settings();
+        $settings['bot'] = false;
+        $_SESSION[self::SESSION_SETTINGS] = $settings;
+    }
+
+    /** @return array{moves:int,whiteMoves:int,blackMoves:int,captures:int,whiteCaptures:int,blackCaptures:int,finishes:int,oracleMoves:int,longestMove:int,startedAt:int} */
+    public static function stats(): array
+    {
+        $defaults = [
+            'moves' => 0,
+            'whiteMoves' => 0,
+            'blackMoves' => 0,
+            'captures' => 0,
+            'whiteCaptures' => 0,
+            'blackCaptures' => 0,
+            'finishes' => 0,
+            'oracleMoves' => 0,
+            'longestMove' => 0,
+            'startedAt' => time(),
+        ];
+
+        $stats = $_SESSION[self::SESSION_STATS] ?? [];
+        if (!is_array($stats)) {
+            $stats = [];
+        }
+
+        $merged = array_merge($defaults, $stats);
+        $_SESSION[self::SESSION_STATS] = $merged;
+        return $merged;
+    }
+
+    public static function resetStats(): void
+    {
+        $_SESSION[self::SESSION_STATS] = [
+            'moves' => 0,
+            'whiteMoves' => 0,
+            'blackMoves' => 0,
+            'captures' => 0,
+            'whiteCaptures' => 0,
+            'blackCaptures' => 0,
+            'finishes' => 0,
+            'oracleMoves' => 0,
+            'longestMove' => 0,
+            'startedAt' => time(),
+        ];
+    }
+
+    /** @param array<string,mixed> $move */
+    public static function recordMove(array $move, bool $oracle = false): void
+    {
+        $stats = self::stats();
+        $color = ($move['color'] ?? 'blanc') === 'noir' ? 'black' : 'white';
+        $captures = (int) ($move['captures'] ?? 0);
+        $distance = (int) ($move['distance'] ?? 0);
+
+        $stats['moves']++;
+        $stats[$color . 'Moves']++;
+        $stats['captures'] += $captures;
+        $stats[$color . 'Captures'] += $captures;
+        $stats['longestMove'] = max((int) $stats['longestMove'], $distance);
+
+        if (!empty($move['finish'])) {
+            $stats['finishes']++;
+        }
+        if ($oracle) {
+            $stats['oracleMoves']++;
+        }
+
+        $_SESSION[self::SESSION_STATS] = $stats;
     }
 
     public static function activeTurnLabel(): string

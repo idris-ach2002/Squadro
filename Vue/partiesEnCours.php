@@ -24,10 +24,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['partie'])) {
         $_SESSION[App::SESSION_PLAYER_COLOR] = $partie->getPlayerOne()->getId() === $playerId ? 'blanc' : 'noir';
         $_SESSION[App::SESSION_HISTORY] = [];
         $_SESSION[App::SESSION_UNDO] = [];
+        App::disableBot();
+        App::resetStats();
         App::redirect('/Controlleur/index_squadro.php');
     }
 
-    App::flash('danger', 'Impossible de rouvrir cette arène.');
+    App::flash('danger', 'Impossible d’ouvrir cette partie.');
     App::redirect('/Vue/partiesEnCours.php');
 }
 
@@ -39,36 +41,35 @@ $flashes = App::consumeFlash();
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Squadro — Campagnes</title>
+    <title>Mes parties</title>
     <link rel="stylesheet" href="/assets/css/app.css">
-    <link rel="stylesheet" href="/assets/css/greek-theme.css">
-    <script defer src="/assets/js/sparta-effects.js"></script>
+    <link rel="stylesheet" href="/assets/css/greek-game.css">
 </head>
-<body class="app-bg greek-theme">
+<body class="app-bg greek-game">
 <main class="shell single">
     <section class="list-card">
-        <p class="eyebrow">Campagnes gravées</p>
-        <h1>Mes batailles</h1>
-        <p>Rouvre une arène active ou une campagne en attente liée à ton nom.</p>
+        <p class="eyebrow">Sauvegardes PostgreSQL</p>
+        <h1>Mes parties en cours</h1>
+        <p>Rouvre une partie active ou en attente liée à votre joueur.</p>
         <?php foreach ($flashes as $flash): ?>
             <div class="alert <?= App::e($flash['type']); ?>"><?= App::e($flash['message']); ?></div>
         <?php endforeach; ?>
         <div class="table-list">
             <?php if ($parties === []): ?>
-                <div class="alert warning">Aucune bataille en cours pour ce guerrier.</div>
+                <div class="alert warning">Aucune partie en cours pour ce joueur.</div>
             <?php else: ?>
                 <?php foreach ($parties as $partieJson): $partie = PartieSquadro::fromJson($partieJson); ?>
                     <form method="post" class="game-row">
                         <div>
-                            <strong>Arène #<?= App::e($partie->getPartieID()); ?> · <?= App::e($partie->getGameStatus()); ?></strong>
-                            <p>Blanc : <?= App::e($partie->getPlayerOne()->getNomJoueur()); ?> · Noir : <?= App::e($partie->getPlayerTwo()?->getNomJoueur() ?? 'en attente'); ?> · initiative <?= App::e($partie->getCurrentTurn()); ?></p>
+                            <strong>Partie #<?= App::e($partie->getPartieID()); ?> · <?= App::e($partie->getGameStatus()); ?></strong>
+                            <p>Blanc : <?= App::e($partie->getPlayerOne()->getNomJoueur()); ?> · Noir : <?= App::e($partie->getPlayerTwo()?->getNomJoueur() ?? 'en attente'); ?> · tour <?= App::e($partie->getCurrentTurn()); ?></p>
                         </div>
-                        <button class="btn primary" name="partie" value="<?= App::e($partie->getPartieID()); ?>">Reprendre</button>
+                        <button class="btn primary" name="partie" value="<?= App::e($partie->getPartieID()); ?>">Ouvrir</button>
                     </form>
                 <?php endforeach; ?>
             <?php endif; ?>
         </div>
-        <p style="margin-top:18px"><a class="btn ghost" href="/Vue/choixAction.php">Retour à l’agora</a></p>
+        <p style="margin-top:18px"><a class="btn ghost" href="/Vue/choixAction.php">Retour au menu</a></p>
     </section>
 </main>
 </body>

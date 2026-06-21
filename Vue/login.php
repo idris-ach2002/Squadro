@@ -44,7 +44,6 @@ $flashes = App::consumeFlash();
 
     <link rel="stylesheet" href="/assets/css/app.css">
     <link rel="stylesheet" href="/assets/css/sparta-home.css">
-    <script defer src="/assets/js/sparta-effects.js"></script>
 </head>
 
 <body class="sparta-home">

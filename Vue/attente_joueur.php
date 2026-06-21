@@ -8,6 +8,8 @@ require_once __DIR__ . '/../skel/PDOSquadro.skel.php';
 
 App::requirePlayer();
 App::initDatabase();
+App::disableBot();
+App::resetStats();
 
 $plateau = new PlateauSquadro();
 $gameId = PDOSquadro::creerPartieSquadro($_SESSION[App::SESSION_PLAYER], $plateau->toJson(), 'waitingForPlayer');
@@ -22,5 +24,5 @@ $_SESSION[App::SESSION_HISTORY] = [];
 $_SESSION[App::SESSION_UNDO] = [];
 unset($_SESSION['position']);
 
-App::flash('success', 'Arène #' . $gameId . ' ouverte. Tu prends les blancs.');
+App::flash('success', 'Partie #' . $gameId . ' créée. Vous jouez les blancs.');
 App::redirect('/Controlleur/index_squadro.php');

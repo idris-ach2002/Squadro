@@ -24,11 +24,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['partie'])) {
         $_SESSION[App::SESSION_GAME_ID] = $partieId;
         $_SESSION[App::SESSION_HISTORY] = [];
         $_SESSION[App::SESSION_UNDO] = [];
-        App::flash('success', 'Arène #' . $partieId . ' rejointe. Tu prends les noirs.');
+        App::disableBot();
+        App::resetStats();
+        App::flash('success', 'Partie #' . $partieId . ' rejointe. Vous jouez les noirs.');
         App::redirect('/Controlleur/index_squadro.php');
     }
 
-    App::flash('danger', 'Cette arène n’est plus disponible.');
+    App::flash('danger', 'Cette partie n’est plus disponible.');
     App::redirect('/Vue/partieAttente.php');
 }
 
@@ -40,36 +42,35 @@ $flashes = App::consumeFlash();
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Squadro — Arènes ouvertes</title>
+    <title>Parties en attente</title>
     <link rel="stylesheet" href="/assets/css/app.css">
-    <link rel="stylesheet" href="/assets/css/greek-theme.css">
-    <script defer src="/assets/js/sparta-effects.js"></script>
+    <link rel="stylesheet" href="/assets/css/greek-game.css">
 </head>
-<body class="app-bg greek-theme">
+<body class="app-bg greek-game">
 <main class="shell single">
     <section class="list-card">
-        <p class="eyebrow">Portes ouvertes</p>
-        <h1>Rejoindre une arène</h1>
-        <p>Ces duels attendent un second guerrier. En entrant, tu prends les noirs et la bataille commence.</p>
+        <p class="eyebrow">Tables ouvertes</p>
+        <h1>Rejoindre une partie</h1>
+        <p>Ces parties attendent un second joueur. En rejoignant, vous prenez les pièces noires.</p>
         <?php foreach ($flashes as $flash): ?>
             <div class="alert <?= App::e($flash['type']); ?>"><?= App::e($flash['message']); ?></div>
         <?php endforeach; ?>
         <div class="table-list">
             <?php if ($parties === []): ?>
-                <div class="alert warning">Aucune arène disponible pour le moment.</div>
+                <div class="alert warning">Aucune partie disponible pour le moment.</div>
             <?php else: ?>
                 <?php foreach ($parties as $partieJson): $partie = PartieSquadro::fromJson($partieJson); ?>
                     <form method="post" class="game-row">
                         <div>
-                            <strong>Arène #<?= App::e($partie->getPartieID()); ?></strong>
-                            <p>Ouverte par <?= App::e($partie->getPlayerOne()->getNomJoueur()); ?> · initiative <?= App::e($partie->getCurrentTurn()); ?></p>
+                            <strong>Partie #<?= App::e($partie->getPartieID()); ?></strong>
+                            <p>Créée par <?= App::e($partie->getPlayerOne()->getNomJoueur()); ?> · tour <?= App::e($partie->getCurrentTurn()); ?></p>
                         </div>
-                        <button class="btn primary" name="partie" value="<?= App::e($partie->getPartieID()); ?>">Entrer</button>
+                        <button class="btn primary" name="partie" value="<?= App::e($partie->getPartieID()); ?>">Rejoindre</button>
                     </form>
                 <?php endforeach; ?>
             <?php endif; ?>
         </div>
-        <p style="margin-top:18px"><a class="btn ghost" href="/Vue/choixAction.php">Retour à l’agora</a></p>
+        <p style="margin-top:18px"><a class="btn ghost" href="/Vue/choixAction.php">Retour au menu</a></p>
     </section>
 </main>
 </body>
